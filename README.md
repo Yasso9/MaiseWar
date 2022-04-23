@@ -1,1 +1,1 @@
-# MaiseWar
+# MazeWar
