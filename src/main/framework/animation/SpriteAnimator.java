@@ -34,6 +34,7 @@ public class SpriteAnimator extends Transition{
         setCycleDuration(duration);
     }
 
+    // Methode permettant le changement de l'icone du joueur lors des mouvements
     public void update(Mover mover, int offsetYDown, int offsetYLeft, int offsetYRight, int offsetYUp) {
         if(mover.isMoving()) {
             play();
@@ -42,27 +43,27 @@ public class SpriteAnimator extends Transition{
 
             // diagonal movement
             if (mover.isMovingUp() && mover.isMovingRight() ) {
-                offsetY = offsetYUp;
-                offsetX = 96;
+                offsetY = offsetYDown;
+                //offsetX = 96;
             }
             else if (mover.isMovingUp() && mover.isMovingLeft()) {
-                offsetY = offsetYLeft;
-                offsetX = 96;
+                offsetY = offsetYDown;
+                //offsetX = 96;
             }
             else if (mover.isMovingDown() && mover.isMovingRight()) {
-                offsetY = offsetYRight;
-                offsetX = 96;
+                offsetY = offsetYDown;
+                //offsetX = 96;
             }
             else if (mover.isMovingDown() && mover.isMovingLeft()) {
                 offsetY = offsetYDown;
-                offsetX = 96;
+                //offsetX = 96;
             }
 
             // straight movement
             else if (mover.getCharacter2D().isFacingDown()) offsetY = offsetYDown;
-            else if (mover.getCharacter2D().isFacingLeft()) offsetY = offsetYLeft;
-            else if (mover.getCharacter2D().isFacingRight()) offsetY = offsetYRight;
-            else if (mover.getCharacter2D().isFacingUp()) offsetY = offsetYUp;
+            else if (mover.getCharacter2D().isFacingLeft()) offsetY = offsetYDown;
+            else if (mover.getCharacter2D().isFacingRight()) offsetY = offsetYDown;
+            else if (mover.getCharacter2D().isFacingUp()) offsetY = offsetYDown;
         } else {
             count = 1;
             offsetX = 32;

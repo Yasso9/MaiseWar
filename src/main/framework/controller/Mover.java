@@ -81,7 +81,7 @@ public class Mover {
     public void updatePos() throws NullPointerException {
 
         // diagonal
-        if(movingUp && movingRight){
+        /*if(movingUp && movingRight){
             if (character2D.isFacingUpRight()) {
                 if (character2D.getHorizontalCollision() == "NONE" && character2D.getVerticalCollision() == "NONE") {
                     character2D.setX(character2D.getX() + character2D.getVelocity()); // move right
@@ -151,10 +151,10 @@ public class Mover {
 
                 }
             } else character2D.setFaceDownLeft();
-        }
+        }*/
 
         // straight movement
-        else if(movingRight){
+        if(movingRight){
             if (character2D.isFacingRight() && character2D.getHorizontalCollision() == "NONE")
                 character2D.setX(character2D.getX() + character2D.getVelocity());
             else

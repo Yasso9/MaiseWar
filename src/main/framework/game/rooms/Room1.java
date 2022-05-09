@@ -77,8 +77,8 @@ public class Room1 implements IState {
         scene.setCamera(perspectiveCamera);
 
         // change canvas size
-        graphicsContext.getCanvas().setHeight(2048);
-        graphicsContext.getCanvas().setWidth(2048);
+        graphicsContext.getCanvas().setHeight(1032);
+        graphicsContext.getCanvas().setWidth(1032);
 
         // Initialize game objects
         // 2d characters and controller
@@ -90,17 +90,17 @@ public class Room1 implements IState {
         sideWalls = new ArrayList<>();
 
         // invisible walls instantiation
-        for(int x = 512; x <= 1536; x+= 32) {
+        for(int x = 512; x <= 1000; x+= 32) {
             sideWalls.add(new GameObject2D("wall", 32, 32, x, 512));
         }
-        for(int x = 512; x <= 1536; x+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, x, 1536));
+        for(int x = 512; x <= 1000; x+= 32) {
+            sideWalls.add(new GameObject2D("wall", 32, 32, x, 1000));
         }
-        for(int y = 512; y <= 1536; y+= 32) {
+        for(int y = 512; y <= 1000; y+= 32) {
             sideWalls.add(new GameObject2D("wall", 32, 32, 512, y));
         }
-        for(int y = 512; y <= 1536; y+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, 1536, y));
+        for(int y = 512; y <= 1000; y+= 32) {
+            sideWalls.add(new GameObject2D("wall", 32, 32, 1000, y));
         }
 
         talker2D = new GameObject2D("talker", 32, 32, 768, 768);
