@@ -7,21 +7,21 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-public class CombatState implements IState {
+public class EtatCombat implements IEtat {
 
     /**----------------------------------**/
 
     private Scene scene;
     private PerspectiveCamera camera;
-    private GraphicsContext graphicsContext;
+    private GraphicsContext contexteGraphique;
 
     /**----------------------------------**/
 
-    private Character playerCharacter;
+    private Character joueurPersonnage;
 
-    public CombatState(Scene scene, GraphicsContext graphicsContext) {
+    public EtatCombat(Scene scene, GraphicsContext contexteGraphique) {
         this.scene = scene;
-        this.graphicsContext = graphicsContext;
+        this.contexteGraphique = contexteGraphique;
     }
 
     @Override
@@ -32,38 +32,35 @@ public class CombatState implements IState {
     }
 
     @Override
-    public void onEnter() {
+    public void enEntree() {
 
     }
 
     @Override
-    public void update(long currentTime) {
+    public void modifier(long currentTime) {
         scene.setOnKeyPressed( e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 System.out.println("Pressed Enter!");
-                StateStack.pop();
-                onExit();
+                PileEtat.precedentEtat();
+                enSortie();
             }
         });
     }
 
     @Override
-    public void draw() {
-        graphicsContext.setFill(Color.BLUE);
-        graphicsContext.fillRect(0, 0, 512, 512);
-
-        // graphicsContext.
-
+    public void afficher() {
+        contexteGraphique.setFill(Color.BLUE);
+        contexteGraphique.fillRect(0, 0, 512, 512);
     }
 
     @Override
-    public void onExit() {
+    public void enSortie() {
         scene.setOnKeyPressed(null);
-        StateStack.getCurrentState().onEnter();
+        PileEtat.getEtatActuel().enEntree();
     }
 
     @Override
-    public void onClose() {
+    public void enFermeture() {
 
     }
 

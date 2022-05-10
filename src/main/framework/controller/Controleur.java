@@ -5,14 +5,14 @@ import javafx.scene.Scene;
 
 import java.util.ArrayList;
 
-public class Manette {
+public class Controleur {
 
     private ArrayList<String> entrees;
     private boolean desactive = false;
 
     // constructor
 
-    public Manette(Scene scene) {
+    public Controleur(Scene scene) {
 
         entrees = new ArrayList<>();
 

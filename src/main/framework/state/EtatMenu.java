@@ -11,23 +11,23 @@ import javafx.scene.text.FontWeight;
 import main.framework.object2D.Zone;
 
 
-public class MainMenuState implements IState {
+public class EtatMenu implements IEtat {
 
     /**------------------------------------**/
 
     private final Scene scene;
-    private final GraphicsContext graphicsContext;
+    private final GraphicsContext contexteGraphique;
     private PerspectiveCamera camera;
     /**------------------------------------**/
 
-    private int currentMarker = 1;
-    private int minMarker = 1;
-    private int maxMarker = 3;
+    private int choixActuel = 1;
+    private int choixMin = 1;
+    private int choixMax = 3;
 
-    private Zone button;
+    private Zone bouton;
 
-    public MainMenuState(Scene scene, GraphicsContext graphicsContext) {
-        this.graphicsContext = graphicsContext;
+    public EtatMenu(Scene scene, GraphicsContext contexteGraphique) {
+        this.contexteGraphique = contexteGraphique;
         this.scene = scene;
     }
 
@@ -48,19 +48,19 @@ public class MainMenuState implements IState {
 
             // choose menu option
             if (event.getCode() == KeyCode.DOWN) {
-                if (currentMarker < maxMarker) currentMarker++;
-                else currentMarker = minMarker;
+                if (choixActuel < choixMax) choixActuel++;
+                else choixActuel = choixMin;
             } else if (event.getCode() == KeyCode.UP) {
-                if (currentMarker > minMarker) currentMarker--;
-                else currentMarker = maxMarker;
+                if (choixActuel > choixMin) choixActuel--;
+                else choixActuel = choixMax;
             }
 
             // trigger
             if (event.getCode() == KeyCode.ENTER) {
-                switch (currentMarker) {
+                switch (choixActuel) {
                     case 1:
                         System.out.println("New Game Selected!");
-                        StateStack.push("room");
+                        PileEtat.afficherEtat("room");
                         break;
                     case 2:
                         System.out.println("Load Game Selected!");
@@ -78,9 +78,9 @@ public class MainMenuState implements IState {
     }
 
     @Override
-    public void onEnter() {
+    public void enEntree() {
 
-        currentMarker = 1;
+        choixActuel = 1;
 
         //camera
         scene.setCamera(camera);
@@ -92,19 +92,19 @@ public class MainMenuState implements IState {
 
             // choose menu option
             if (event.getCode() == KeyCode.DOWN) {
-                if (currentMarker < maxMarker) currentMarker++;
-                else currentMarker = minMarker;
+                if (choixActuel < choixMax) choixActuel++;
+                else choixActuel = choixMin;
             } else if (event.getCode() == KeyCode.UP) {
-                if (currentMarker > minMarker) currentMarker--;
-                else currentMarker = maxMarker;
+                if (choixActuel > choixMin) choixActuel--;
+                else choixActuel = choixMax;
             }
 
             // trigger
             if (event.getCode() == KeyCode.ENTER) {
-                switch (currentMarker) {
+                switch (choixActuel) {
                     case 1:
                         System.out.println("New Game Selected!");
-                        StateStack.push("room");
+                        PileEtat.afficherEtat("room");
                         break;
                     case 2:
                         System.out.println("Load Game Selected!");
@@ -123,39 +123,39 @@ public class MainMenuState implements IState {
     }
 
     @Override
-    public void update(long currentTime) {
+    public void modifier(long currentTime) {
         // main menu
     }
 
     @Override
-    public void draw() {
+    public void afficher() {
 
-        graphicsContext.setFill(Color.WHITE);
-        graphicsContext.fillRect(0,0,512,512);
+        contexteGraphique.setFill(Color.WHITE);
+        contexteGraphique.fillRect(0,0,512,512);
 
-        graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
+        contexteGraphique.setFont(Font.font("Verdana", FontWeight.BOLD, 18));
 
-        graphicsContext.setFill((currentMarker == 1? Color.BLUE : Color.BLACK));
-        graphicsContext.fillText("New Game", 64, 384);
+        contexteGraphique.setFill((choixActuel == 1? Color.BLUE : Color.BLACK));
+        contexteGraphique.fillText("New Game", 64, 384);
 
-        graphicsContext.setFill((currentMarker == 2? Color.BLUE : Color.BLACK));
-        graphicsContext.fillText("Load Game", 64, 416);
+        contexteGraphique.setFill((choixActuel == 2? Color.BLUE : Color.BLACK));
+        contexteGraphique.fillText("Load Game", 64, 416);
 
-        graphicsContext.setFill((currentMarker == 3? Color.BLUE : Color.BLACK));
-        graphicsContext.fillText("Exit", 64, 448);
+        contexteGraphique.setFill((choixActuel == 3? Color.BLUE : Color.BLACK));
+        contexteGraphique.fillText("Exit", 64, 448);
     }
 
     @Override
-    public void onExit() {
+    public void enSortie() {
         scene.setOnKeyPressed(null);
         scene.setOnKeyReleased(null);
         // pushes room 1 to the stack
-        StateStack.push("room");
+        PileEtat.afficherEtat("room");
         System.out.println("Exited Main Menu State. Now going to room");
     }
 
     @Override
-    public void onClose() {
+    public void enFermeture() {
 
     }
 }

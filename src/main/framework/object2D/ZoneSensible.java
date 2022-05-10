@@ -14,23 +14,23 @@ public class ZoneSensible extends Zone {
      * @param y
      **/
 
-    private ArrayList<PositionPersonnage> positionPersonnageAutorises = new ArrayList<>();
+    private ArrayList<MouvementPersonnage> mouvementPersonnageAutorises = new ArrayList<>();
 
     public ZoneSensible(String nom, double largeur, double hauteur, double positionX, double positionY) {
         super(nom, largeur, hauteur, positionX, positionY);
     }
 
-    public void ajoutPersonnageDeclencheur(PositionPersonnage positionPersonnage) {
-        positionPersonnageAutorises.add(positionPersonnage);
+    public void ajoutPersonnageDeclencheur(MouvementPersonnage mouvementPersonnage) {
+        mouvementPersonnageAutorises.add(mouvementPersonnage);
     }
 
     public boolean personnageSurZoneSensible() {
 
         boolean declencherZone = false;
 
-        for (PositionPersonnage positionPersonnage : positionPersonnageAutorises) {
+        for (MouvementPersonnage mouvementPersonnage : mouvementPersonnageAutorises) {
 
-            if( this.intersects(positionPersonnage.getLayoutBounds()) ) {
+            if( this.intersects(mouvementPersonnage.getLayoutBounds()) ) {
                 // returns true if character2D touches the hotspot
                 declencherZone = true;
             }

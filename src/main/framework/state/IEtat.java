@@ -7,18 +7,18 @@ import javafx.scene.canvas.GraphicsContext;
  * serves as the template of other game states or rooms
  */
 
-public interface IState {
+public interface IEtat {
 
     void init();
 
-    void onEnter();
+    void enEntree();
 
-    void update(long currentTime);
+    void modifier(long currentTime);
 
-    void draw();
+    void afficher();
 
-    void onExit();
+    void enSortie();
 
-    void onClose();
+    void enFermeture();
 
 }

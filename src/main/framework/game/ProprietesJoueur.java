@@ -2,19 +2,19 @@ package main.framework.game;
 
 
 import javafx.scene.PerspectiveCamera;
-import main.framework.controller.Manette;
+import main.framework.controller.Controleur;
 import main.framework.controller.Mouvement;
 import main.framework.entities.Personnage;
-import main.framework.object2D.PositionPersonnage;
+import main.framework.object2D.MouvementPersonnage;
 
 public enum ProprietesJoueur {
 
-    Player1;
+    Joueur1;
 
     private PerspectiveCamera camera = null;
     private Personnage personnage = null;
-    private PositionPersonnage positionPersonnage = null;
-    private Manette manette = null;
+    private MouvementPersonnage mouvementPersonnage = null;
+    private Controleur controleur = null;
     private Mouvement mouvement = null;
 
     public PerspectiveCamera getCamera() {
@@ -25,15 +25,15 @@ public enum ProprietesJoueur {
         return personnage;
     }
 
-    public PositionPersonnage getZonePersonnage() {
-        return positionPersonnage;
+    public MouvementPersonnage getMouvementPersonnage() {
+        return mouvementPersonnage;
     }
 
-    public Manette getController() {
-        return manette;
+    public Controleur getControleur() {
+        return controleur;
     }
 
-    public Mouvement getMover() {
+    public Mouvement getMouvement() {
         return mouvement;
     }
 
@@ -41,19 +41,19 @@ public enum ProprietesJoueur {
         this.camera = camera;
     }
 
-    public void setCharacter(Personnage personnage) {
+    public void setPersonnage(Personnage personnage) {
         this.personnage = personnage;
     }
 
-    public void setCharacter2D(PositionPersonnage positionPersonnage) {
-        this.positionPersonnage = positionPersonnage;
+    public void setMouvementPersonnage(MouvementPersonnage mouvementPersonnage) {
+        this.mouvementPersonnage = mouvementPersonnage;
     }
 
-    public void setController(Manette manette) {
-        this.manette = manette;
+    public void setControleur(Controleur controleur) {
+        this.controleur = controleur;
     }
 
-    public void setMover(Mouvement mouvement) {
+    public void setMouvement(Mouvement mouvement) {
         this.mouvement = mouvement;
     }
 

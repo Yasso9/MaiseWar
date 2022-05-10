@@ -2,7 +2,7 @@ package main.framework.object2D;
 
 import java.util.ArrayList;
 
-public class PositionPersonnage extends Zone {
+public class MouvementPersonnage extends Zone {
 
     private boolean versLaDroite = false;
     private boolean versLeBas = true;
@@ -21,11 +21,11 @@ public class PositionPersonnage extends Zone {
      * @param positionY
      **/
 
-    public PositionPersonnage(String nom, double largeur, double hauteur, double positionX, double positionY) {
+    public MouvementPersonnage(String nom, double largeur, double hauteur, double positionX, double positionY) {
         super(nom, largeur, hauteur, positionX, positionY);
     }
 
-    public PositionPersonnage(String nom, double largeur, double hauteur, double positionX, double positionY, double vitesse) {
+    public MouvementPersonnage(String nom, double largeur, double hauteur, double positionX, double positionY, double vitesse) {
         super(nom, largeur, hauteur, positionX, positionY);
         this.setVitesse(vitesse);
     }
@@ -167,7 +167,7 @@ public class PositionPersonnage extends Zone {
 
     /** ============================== ACTION EVENT HANDLER ===================== **/
 
-    public void actionBy(PositionPersonnage c) {
+    public void actionBy(MouvementPersonnage c) {
         // get action of Character2D c for this entities
     }
 

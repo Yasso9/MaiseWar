@@ -1,6 +1,6 @@
 package main.framework.controller;
 
-import main.framework.object2D.PositionPersonnage;
+import main.framework.object2D.MouvementPersonnage;
 
 import java.util.ArrayList;
 
@@ -11,17 +11,17 @@ public class Mouvement {
     private boolean deplacementHaut = false;
     private boolean deplacementBas = false;
 
-    private Manette manette;
-    private PositionPersonnage positionPersonnage;
+    private Controleur controleur;
+    private MouvementPersonnage mouvementPersonnage;
     private ArrayList<String> entrees;
 
-    public Mouvement(Manette manette, PositionPersonnage positionPersonnage) {
-        this.positionPersonnage = positionPersonnage;
-        this.manette = manette;
+    public Mouvement(Controleur controleur, MouvementPersonnage mouvementPersonnage) {
+        this.mouvementPersonnage = mouvementPersonnage;
+        this.controleur = controleur;
     }
 
-    public PositionPersonnage getCharacter2D() {
-        return positionPersonnage;
+    public MouvementPersonnage getMouvementPersonnage() {
+        return mouvementPersonnage;
     }
 
     public boolean seDeplace() {
@@ -48,7 +48,7 @@ public class Mouvement {
 
     public void update() {
 
-        entrees = manette.getEntrees();
+        entrees = controleur.getEntrees();
 
         if(entrees.contains("RIGHT"))
             deplacementDroite = true;
@@ -81,31 +81,31 @@ public class Mouvement {
 
         // straight movement
         if(deplacementDroite){
-            if (positionPersonnage.versLaDroite() && positionPersonnage.getCollisionHorizontale() == "NONE")
-                positionPersonnage.setX(positionPersonnage.getX() + positionPersonnage.getVitesse());
+            if (mouvementPersonnage.versLaDroite() && mouvementPersonnage.getCollisionHorizontale() == "NONE")
+                mouvementPersonnage.setX(mouvementPersonnage.getX() + mouvementPersonnage.getVitesse());
             else
-                positionPersonnage.setVersLaDroite();
+                mouvementPersonnage.setVersLaDroite();
         }
 
         else if(deplacementGauche){
-            if (positionPersonnage.versLaGauche() && positionPersonnage.getCollisionHorizontale() == "NONE")
-                positionPersonnage.setX(positionPersonnage.getX() - positionPersonnage.getVitesse());
+            if (mouvementPersonnage.versLaGauche() && mouvementPersonnage.getCollisionHorizontale() == "NONE")
+                mouvementPersonnage.setX(mouvementPersonnage.getX() - mouvementPersonnage.getVitesse());
             else
-                positionPersonnage.setVersLaGauche();
+                mouvementPersonnage.setVersLaGauche();
         }
 
         else if(deplacementHaut){
-            if (positionPersonnage.versLeHaut() && positionPersonnage.getCollisionVerticale() == "NONE")
-                positionPersonnage.setY(positionPersonnage.getY() - positionPersonnage.getVitesse());
+            if (mouvementPersonnage.versLeHaut() && mouvementPersonnage.getCollisionVerticale() == "NONE")
+                mouvementPersonnage.setY(mouvementPersonnage.getY() - mouvementPersonnage.getVitesse());
             else
-                positionPersonnage.setVersLeHaut();
+                mouvementPersonnage.setVersLeHaut();
         }
 
         else if(deplacementBas){
-            if (positionPersonnage.versLeBas() && positionPersonnage.getCollisionVerticale() == "NONE")
-                positionPersonnage.setY(positionPersonnage.getY() + positionPersonnage.getVitesse());
+            if (mouvementPersonnage.versLeBas() && mouvementPersonnage.getCollisionVerticale() == "NONE")
+                mouvementPersonnage.setY(mouvementPersonnage.getY() + mouvementPersonnage.getVitesse());
             else
-                positionPersonnage.setVersLeBas();
+                mouvementPersonnage.setVersLeBas();
         }
 
     }
