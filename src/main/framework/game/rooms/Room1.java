@@ -10,12 +10,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import main.framework.animation.SpriteAnimator;
-import main.framework.game.PlayerProperties;
-import main.framework.object2D.Character2D;
-import main.framework.controller.Controller;
-import main.framework.controller.Mover;
-import main.framework.object2D.GameObject2D;
-import main.framework.object2D.Hotspot;
+import main.framework.game.ProprietesJoueur;
+import main.framework.object2D.PositionPersonnage;
+import main.framework.controller.Manette;
+import main.framework.controller.Mouvement;
+import main.framework.object2D.Zone;
+import main.framework.object2D.ZoneSensible;
 import main.framework.state.IState;
 import main.framework.state.StateStack;
 
@@ -37,17 +37,17 @@ public class Room1 implements IState {
     /**---------------------------------**/
 
     /**--------------------------- game objects ----------------------------**/
-    private Character2D player;
-    private ArrayList<GameObject2D> sideWalls;
-    private GameObject2D talker2D;
+    private PositionPersonnage player;
+    private ArrayList<Zone> sideWalls;
+    private Zone talker2D;
 
     // hotspots
-    private Hotspot enemy;
-    private Hotspot talker;
+    private ZoneSensible enemy;
+    private ZoneSensible talker;
 
     // player properties
-    private Controller playerController;
-    private Mover playerMover;
+    private Manette playerManette;
+    private Mouvement playerMouvement;
     private ImageView imageView;
 
     // sprite
@@ -82,36 +82,36 @@ public class Room1 implements IState {
 
         // Initialize game objects
         // 2d characters and controller
-        player = new Character2D("player", /*w*/20, /*h*/20, /*x*/768, /*y*/900, 2); // always make x and y even
-        playerController = new Controller(scene);
-        playerMover = new Mover(playerController, player);
+        player = new PositionPersonnage("player", /*w*/20, /*h*/20, /*x*/768, /*y*/900, 2); // always make x and y even
+        playerManette = new Manette(scene);
+        playerMouvement = new Mouvement(playerManette, player);
 
         // 2d game objects (objects with no collisions)
         sideWalls = new ArrayList<>();
 
         // invisible walls instantiation
         for(int x = 512; x <= 1000; x+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, x, 512));
+            sideWalls.add(new Zone("wall", 32, 32, x, 512));
         }
         for(int x = 512; x <= 1000; x+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, x, 1000));
+            sideWalls.add(new Zone("wall", 32, 32, x, 1000));
         }
         for(int y = 512; y <= 1000; y+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, 512, y));
+            sideWalls.add(new Zone("wall", 32, 32, 512, y));
         }
         for(int y = 512; y <= 1000; y+= 32) {
-            sideWalls.add(new GameObject2D("wall", 32, 32, 1000, y));
+            sideWalls.add(new Zone("wall", 32, 32, 1000, y));
         }
 
-        talker2D = new GameObject2D("talker", 32, 32, 768, 768);
-        player.addCollision(sideWalls);
-        player.addCollision(talker2D); // add a collision to talker
+        talker2D = new Zone("talker", 32, 32, 768, 768);
+        player.ajouterCollision(sideWalls);
+        player.ajouterCollision(talker2D); // add a collision to talker
 
         // hotspots and triggers
-        enemy = new Hotspot("door", 32, 32 , 768, 832); // combat initiator
-        talker = new Hotspot("talker", 64, 64, 752, 752); // dialogue initiator
-        enemy.addTriggerCharacter(player);
-        talker.addTriggerCharacter(player);
+        enemy = new ZoneSensible("door", 32, 32 , 768, 832); // combat initiator
+        talker = new ZoneSensible("talker", 64, 64, 752, 752); // dialogue initiator
+        enemy.ajoutPersonnageDeclencheur(player);
+        talker.ajoutPersonnageDeclencheur(player);
 
         // set up images
         playerSprite = new Image(getClass().getResourceAsStream("../resources/sprites.png"));
@@ -135,23 +135,23 @@ public class Room1 implements IState {
         graphicsContext.setFill(Color.BLACK);
         graphicsContext.fillRect(0, 0, 2048, 2048);
 
-        player = PlayerProperties.Player1.getCharacter2D();
-        playerController = new Controller(scene);
-        playerMover = new Mover(playerController, player);
+        player = ProprietesJoueur.Player1.getZonePersonnage();
+        playerManette = new Manette(scene);
+        playerMouvement = new Mouvement(playerManette, player);
 
         animator.play();
     }
 
     @Override
     public void update(long currentTime) {
-        animator.update(this.playerMover, 0, 32, 64, 96);
-        animator.updateView(playerMover);
-        playerMover.update();
+        animator.update(this.playerMouvement, 0, 32, 64, 96);
+        animator.updateView(playerMouvement);
+        playerMouvement.update();
         perspectiveCamera.setTranslateY(player.getY());
         perspectiveCamera.setTranslateX(player.getX());
 
         if (enemy != null) {
-            if (enemy.isCharacterOnHotspot()) {
+            if (enemy.personnageSurZoneSensible()) {
                 System.out.println("Player is standing on door!");
                 StateStack.push("combat");
                 enemy = null;
@@ -159,7 +159,7 @@ public class Room1 implements IState {
             }
         }
 
-        if(playerController.getInputs().contains("ESCAPE")) {
+        if(playerManette.getEntrees().contains("ESCAPE")) {
             onExit();
             StateStack.push("gameMenu");
         }
@@ -176,7 +176,7 @@ public class Room1 implements IState {
         }
 
         // draw walls
-        for (GameObject2D wall : sideWalls) {
+        for (Zone wall : sideWalls) {
             graphicsContext.drawImage(tileset, 32, 0, 32, 32, wall.getX(), wall.getY(), wall.getHeight(), wall.getWidth());
         }
 
@@ -186,7 +186,7 @@ public class Room1 implements IState {
 
         graphicsContext.drawImage(otherSprites, 32, 0, 32, 32, talker2D.getX(), talker2D.getY(), talker2D.getWidth(), talker2D.getHeight());
 
-        graphicsContext.setFill((talker.isCharacterOnHotspot()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
+        graphicsContext.setFill((talker.personnageSurZoneSensible()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
         graphicsContext.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
     }
 
@@ -196,7 +196,7 @@ public class Room1 implements IState {
         scene.setOnKeyReleased(null);
         animator.stop();
         // set global player properties
-        PlayerProperties.Player1.setCharacter2D(player);
+        ProprietesJoueur.Player1.setCharacter2D(player);
     }
 
     @Override

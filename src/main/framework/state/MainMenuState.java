@@ -8,7 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import main.framework.object2D.GameObject2D;
+import main.framework.object2D.Zone;
 
 
 public class MainMenuState implements IState {
@@ -24,7 +24,7 @@ public class MainMenuState implements IState {
     private int minMarker = 1;
     private int maxMarker = 3;
 
-    private GameObject2D button;
+    private Zone button;
 
     public MainMenuState(Scene scene, GraphicsContext graphicsContext) {
         this.graphicsContext = graphicsContext;

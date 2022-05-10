@@ -25,13 +25,12 @@ public class Game extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
 
-   // Image image = new Image(getClass().getResourceAsStream("EntitySet.png"));
+    // Image image = new Image(getClass().getResourceAsStream("EntitySet.png"));
 
     // SpriteAnimator sa;
 
     @Override
     public void init() throws Exception {
-
         // initialize javafx nodes
         root = new Group();
         scene = new Scene(root);

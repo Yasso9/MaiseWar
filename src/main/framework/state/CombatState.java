@@ -5,9 +5,7 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
-import main.framework.game.PlayerProperties;
 
 public class CombatState implements IState {
 

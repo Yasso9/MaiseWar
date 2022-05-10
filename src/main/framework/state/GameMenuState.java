@@ -8,7 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import main.framework.object2D.GameObject2D;
+import main.framework.object2D.Zone;
 
 
 public class GameMenuState implements IState {
@@ -17,13 +17,13 @@ public class GameMenuState implements IState {
     private GraphicsContext graphicsContext;
 
     // Marker for item focused
-    private GameObject2D marker2D;
+    private Zone marker2D;
     private int minMarker = 1;
     private int currentMarker = 1;
     private int maxMarker = 4;
 
     // in game menu box
-    private GameObject2D menuBox;
+    private Zone menuBox;
 
     public GameMenuState (Scene scene, GraphicsContext gc) {
         this.scene = scene;
@@ -75,8 +75,8 @@ public class GameMenuState implements IState {
         });
 
         // instantiates menu 2D objects
-        menuBox = new GameObject2D("menu", 128, 160, scene.getCamera().getTranslateX() + 64, scene.getCamera().getTranslateY() - 192);
-        marker2D = new GameObject2D("marker", 12, 12, menuBox.getX() + 16, menuBox.getY() + 32);
+        menuBox = new Zone("menu", 128, 160, scene.getCamera().getTranslateX() + 64, scene.getCamera().getTranslateY() - 192);
+        marker2D = new Zone("marker", 12, 12, menuBox.getX() + 16, menuBox.getY() + 32);
     }
 
     @Override
