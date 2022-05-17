@@ -8,23 +8,24 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
 import main.framework.game.PlayerProperties;
-import main.framework.game.rooms.Room1;
 
-public class CombatState implements IState {
+public class ItemsState implements IState {
 
     /**----------------------------------**/
 
     private Scene scene;
     private PerspectiveCamera camera;
     private GraphicsContext graphicsContext;
+    private String item;
 
     /**----------------------------------**/
 
     private Character playerCharacter;
 
-    public CombatState(Scene scene, GraphicsContext graphicsContext) {
+    public ItemsState(Scene scene, GraphicsContext graphicsContext,String item) {
         this.scene = scene;
         this.graphicsContext = graphicsContext;
+        this.item = item;
     }
 
     @Override
@@ -52,15 +53,12 @@ public class CombatState implements IState {
 
     @Override
     public void draw() {
-//        graphicsContext.setFill(Color.RED);
-//        graphicsContext.fillRect(0, 0, 512, 512);
 
-        graphicsContext.fillText("you win",256,256,512);
+        if (item.equals("potion"))
+            graphicsContext.fillText("level up ",256,256,512);
 
-
-
-
-        // graphicsContext.
+        if (item.equals("key"))
+            graphicsContext.fillText("you get key :) ",256,256,512);
 
     }
 

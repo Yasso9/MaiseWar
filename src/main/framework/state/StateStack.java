@@ -1,5 +1,7 @@
 package main.framework.state;
 
+import main.framework.object2D.Character2D;
+
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -8,7 +10,7 @@ public class StateStack {
 
     private static HashMap<String, IState> stateMap = new HashMap<>();
     private static Stack<IState> stateStack = new Stack<>();
-
+    private static Character2D player ;
     public static void addState(String key ,IState state) {
         stateMap.put(key, state);
     }

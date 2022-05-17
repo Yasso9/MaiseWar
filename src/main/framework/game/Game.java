@@ -9,10 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import main.framework.state.CombatState;
-import main.framework.state.GameMenuState;
-import main.framework.state.MainMenuState;
-import main.framework.state.StateStack;
+import main.framework.state.*;
 import main.framework.game.rooms.Room1;
 
 import java.awt.*;
@@ -25,17 +22,13 @@ public class Game extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
 
-   // Image image = new Image(getClass().getResourceAsStream("EntitySet.png"));
-
-    // SpriteAnimator sa;
-
     @Override
     public void init() throws Exception {
 
         // initialize javafx nodes
         root = new Group();
         scene = new Scene(root);
-        canvas = new Canvas(512, 512);
+        canvas = new Canvas(612, 612);
         root.getChildren().addAll(canvas);
         gc = canvas.getGraphicsContext2D();
         scene.setFill(Color.BLACK);
@@ -44,16 +37,19 @@ public class Game extends Application {
         StateStack.addState("room", new Room1(scene, gc));
         StateStack.addState("gameMenu", new GameMenuState(scene, gc));
         StateStack.addState("combat", new CombatState(scene, gc));
+        StateStack.addState("potion", new ItemsState(scene, gc,"potion"));
+        StateStack.addState("key", new ItemsState(scene,gc,"key"));
+
 
         StateStack.push("mainmenu");
-        canvas = new Canvas(2048, 2048);
+
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         primaryStage.setScene(scene);
-        primaryStage.setTitle("RPG Game"); // title displayed on game window
+        primaryStage.setTitle("Maze war"); // title displayed on game window
         primaryStage.setResizable(false);
         primaryStage.centerOnScreen();
         primaryStage.show();
