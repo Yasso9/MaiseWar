@@ -3,13 +3,18 @@ package main.framework.animation;
 
 import javafx.animation.Transition;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import main.framework.controller.Mouvement;
+import javafx.scene.canvas.GraphicsContext;
+import main.framework.object2D.ZoneSensible;
+
+
 
 public class ChangementSprite extends Transition{
 
-    private ImageView vue;
+    private ImageView vueJoueur;
     private int count;
     private final int colonnes;
     private int differenceX;
@@ -17,8 +22,8 @@ public class ChangementSprite extends Transition{
     private final int largeur;
     private final int hauteur;
 
-    public ChangementSprite(ImageView vue, Duration duration, int count, int colonnes, int differenceX, int differenceY, int largeur, int hauteur) {
-        this.vue = vue;
+    public ChangementSprite(ImageView vueJoueur, Duration duration, int count, int colonnes, int differenceX, int differenceY, int largeur, int hauteur) {
+        this.vueJoueur = vueJoueur;
         this.count = count;
         this.colonnes = colonnes;
         this.differenceX = differenceX;
@@ -47,8 +52,8 @@ public class ChangementSprite extends Transition{
 
     public void modifierVue(Mouvement mouvement) {
         // updating
-        vue.setTranslateX(mouvement.getMouvementPersonnage().getX() - 6); // default is without the minus modifier
-        vue.setTranslateY(mouvement.getMouvementPersonnage().getY() - 16); // default is without the minus modifier
+        vueJoueur.setTranslateX(mouvement.getMouvementPersonnage().getX() - 6); // default is without the minus modifier
+        vueJoueur.setTranslateY(mouvement.getMouvementPersonnage().getY() - 16); // default is without the minus modifier
     }
 
     @Override
@@ -56,7 +61,9 @@ public class ChangementSprite extends Transition{
         final int index = Math.min((int) Math.floor(frac * count), count - 1);
         final int x = (index % colonnes) * largeur + differenceX;
         final int y = (index / colonnes) * hauteur + differenceY;
-        vue.setViewport(new Rectangle2D(x, y, largeur, hauteur));
+        //System.out.println("x : " + x);
+        //System.out.println("y : " + y);
+        vueJoueur.setViewport(new Rectangle2D(x, y, largeur, hauteur));
     }
 
 }

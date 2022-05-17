@@ -95,6 +95,10 @@ public class MouvementPersonnage extends Zone {
         collisions.add(zone);
     }
 
+    public void supprimerCollision(Zone zone) {
+        collisions.remove(zone);
+    }
+
     public void ajouterCollision(ArrayList<Zone> zone) {
         collisions.addAll(zone);
     }

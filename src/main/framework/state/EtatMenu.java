@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import main.framework.object2D.Zone;
+import main.framework.object2D.ZoneSensible;
 
 
 public class EtatMenu implements IEtat {
@@ -128,7 +129,7 @@ public class EtatMenu implements IEtat {
     }
 
     @Override
-    public void afficher() {
+    public void afficher(long currentTime) {
 
         contexteGraphique.setFill(Color.WHITE);
         contexteGraphique.fillRect(0,0,512,512);
@@ -157,5 +158,10 @@ public class EtatMenu implements IEtat {
     @Override
     public void enFermeture() {
 
+    }
+
+    @Override
+    public ZoneSensible getEnnemi() {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package main.framework.game;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -8,11 +9,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import main.framework.state.EtatCombat;
 import main.framework.state.EtatMenuJeu;
 import main.framework.state.EtatMenu;
 import main.framework.state.PileEtat;
 import main.framework.game.rooms.Room1;
+
+import java.util.concurrent.TimeUnit;
 
 public class Jeu extends Application {
 
@@ -60,7 +64,7 @@ public class Jeu extends Application {
             public void handle(long maintenant) {
                 // finds the last pushed state in the stack then puts it in the game loop
                 PileEtat.getEtatActuel().modifier(maintenant);
-                PileEtat.getEtatActuel().afficher();
+                PileEtat.getEtatActuel().afficher(maintenant);
             }
         };
 

@@ -1,15 +1,23 @@
 package main.framework.game.rooms;
 
 import javafx.animation.Animation;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.VPos;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import main.framework.animation.ChangementSprite;
+import main.framework.entities.Personnage;
 import main.framework.game.ProprietesJoueur;
 import main.framework.object2D.MouvementPersonnage;
 import main.framework.controller.Controleur;
@@ -19,7 +27,11 @@ import main.framework.object2D.ZoneSensible;
 import main.framework.state.IEtat;
 import main.framework.state.PileEtat;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static main.framework.game.Jeu.root;
 
@@ -40,6 +52,8 @@ public class Room1 implements IEtat {
     private MouvementPersonnage joueur;
     private ArrayList<Zone> mursDeCote;
     private Zone zonePNJ;
+    private Zone zoneEnnemi;
+
 
     // hotspots
     private ZoneSensible ennemi;
@@ -48,13 +62,24 @@ public class Room1 implements IEtat {
     // joueur properties
     private Controleur joueurControleur;
     private Mouvement joueurMouvement;
-    private ImageView vue;
+    private ImageView vueJoueurSprite;
+
+    private Personnage personnagePNJ;
+    private Personnage personnageEnnemi;
+    private Personnage personnageJoueur;
 
     // sprite
     Image designZone;
     Image joueurSprite; // joueur sprite joueurSprite
     Image autreSprites;
     ChangementSprite transition;
+
+    LocalDateTime dateAncien = LocalDateTime.now();
+    int secondeAncienCoupEnnemi = dateAncien.toLocalTime().toSecondOfDay();
+    int secondeAncienCoupJoueur = dateAncien.toLocalTime().toSecondOfDay();
+
+    int entreesSize;
+
     /**---------------------------------------------------------------------**/
 
     public Room1(Scene scene, GraphicsContext contexteGraphique) {
@@ -103,13 +128,27 @@ public class Room1 implements IEtat {
             mursDeCote.add(new Zone("wall", 32, 32, 1000, y));
         }
 
-        zonePNJ = new Zone("pnj", 32, 32, 768, 768);
+        //zonePNJ = new Zone("pnj", 32, 32, 768, 768);
         joueur.ajouterCollision(mursDeCote);
-        joueur.ajouterCollision(zonePNJ); // add a collision to pnj
 
         // hotspots and triggers
-        ennemi = new ZoneSensible("door", 32, 32 , 768, 832); // combat initiator
-        pnj = new ZoneSensible("pnj", 64, 64, 752, 752); // dialogue initiator
+
+        personnageEnnemi = new Personnage("ennemi", 32, 32 , 768, 832, 100, 10, 1);
+        ennemi = personnageEnnemi.creerZoneSensiblePersonnage();
+
+        zoneEnnemi = personnageEnnemi.creerZonePersonnage();
+        joueur.ajouterCollision(zoneEnnemi);
+
+        //ennemi = new ZoneSensible("door", 32, 32 , 768, 832); // combat initiator
+        //pnj = new ZoneSensible("pnj", 64, 64, 752, 752); // dialogue initiator
+
+        personnagePNJ = new Personnage("pnj", 32, 32 , 752, 752);
+        pnj = personnagePNJ.creerZoneSensiblePersonnage();
+
+        zonePNJ = personnagePNJ.creerZonePersonnage();
+        joueur.ajouterCollision(zonePNJ); // add a collision to pnj
+
+
         ennemi.ajoutPersonnageDeclencheur(joueur);
         pnj.ajoutPersonnageDeclencheur(joueur);
 
@@ -118,15 +157,29 @@ public class Room1 implements IEtat {
         autreSprites = new Image(getClass().getResourceAsStream("../resources/EntitySet.png"));
         designZone = new Image(getClass().getResourceAsStream("../resources/tileset.png"));
 
-        vue = new ImageView(joueurSprite);
-        vue.setViewport(new Rectangle2D(0, 32, 32, 32));
-        root.getChildren().add(vue);
+
+        vueJoueurSprite = new ImageView(joueurSprite);
+        vueJoueurSprite.setViewport(new Rectangle2D(0, 32, 32, 32));
+        root.getChildren().add(vueJoueurSprite);
+
+        personnageJoueur = new Personnage("joueur", 100, 10, 1);
+
+        /*Text vieJoueur = new Text("VIE JOUEUR");
+        vieJoueur.setFill(Color.BLUE);
+        root.getChildren().add(vieJoueur);*/
+
+        //personnageJoueur = new Personnage("joueur", 100, 10);
+
 
         // instantiates sprite transition
-        transition = new ChangementSprite( vue,
+        transition = new ChangementSprite( vueJoueurSprite,
                Duration.millis(300), 3, 3, /* offsetX */ 0, /* offsetY */ 0, 32, 32
         );
         transition.setCycleCount(Animation.INDEFINITE);
+
+
+        //System.out.println("seconds Ancien Time : " + secondsAncien);
+
     }
 
     @Override
@@ -150,15 +203,6 @@ public class Room1 implements IEtat {
         cameraPerspective.setTranslateY(joueur.getY());
         cameraPerspective.setTranslateX(joueur.getX());
 
-        if (ennemi != null) {
-            if (ennemi.personnageSurZoneSensible()) {
-                System.out.println("Player is standing on door!");
-                PileEtat.afficherEtat("combat");
-                ennemi = null;
-                enSortie();
-            }
-        }
-
         if(joueurControleur.getEntrees().contains("ESCAPE")) {
             enSortie();
             PileEtat.afficherEtat("gameMenu");
@@ -166,7 +210,13 @@ public class Room1 implements IEtat {
     }
 
     @Override
-    public void afficher() {
+    public ZoneSensible getEnnemi(){
+        return ennemi;
+    }
+
+
+    @Override
+    public void afficher(long currentTime) {
 
         // draw grass floor
        for (int y = 512; y <= 1536; y += 32) {
@@ -181,12 +231,44 @@ public class Room1 implements IEtat {
         }
 
         // combat initiator hotspot
-        if(ennemi != null)
+        if(ennemi != null){
             contexteGraphique.drawImage(autreSprites, 128, 0, 32, 32, ennemi.getX(), ennemi.getY(), ennemi.getWidth(), ennemi.getHeight());
+            if(ennemi.personnageEstSurSaZoneSensible()) {
 
-        contexteGraphique.drawImage(autreSprites, 32, 0, 32, 32, zonePNJ.getX(), zonePNJ.getY(), zonePNJ.getWidth(), zonePNJ.getHeight());
+                LocalDateTime date = LocalDateTime.now();
+                int seconds = date.toLocalTime().toSecondOfDay();
 
-        contexteGraphique.setFill((pnj.personnageSurZoneSensible()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
+                contexteGraphique.drawImage(autreSprites, 64, 0, 32, 32, ennemi.getX(), ennemi.getY(), ennemi.getWidth(), ennemi.getHeight());
+                if(seconds >= secondeAncienCoupEnnemi + personnageEnnemi.getDelaiAttaque()){
+                    System.out.println("Attaque en cours");
+                    personnageEnnemi.attaque(personnageJoueur);
+                    secondeAncienCoupEnnemi = seconds;
+                }
+                if(joueurControleur.getEntrees().size() >= 1){
+                    if(joueurControleur.getEntrees().get(joueurControleur.getEntrees().size() - 1).equals("ENTER")){
+                        joueurControleur.getEntrees().clear();
+                        personnageJoueur.attaque(personnageEnnemi);
+                        secondeAncienCoupJoueur = seconds;
+
+                    }
+                }
+
+                if(!personnageEnnemi.estEnVie()){
+                    joueur.supprimerCollision(zoneEnnemi);
+                    ennemi = null;
+                    System.out.println("Ennemi 6 : " + ennemi);
+                }
+
+                if(!personnageJoueur.estEnVie()){
+                    PileEtat.afficherEtat("combat");
+                    enSortie();
+                }
+            }
+        }
+
+        contexteGraphique.drawImage(autreSprites, 32, 0, 32, 32, pnj.getX(), pnj.getY(), pnj.getWidth(), pnj.getHeight());
+
+        contexteGraphique.setFill((pnj.personnageEstSurSaZoneSensible()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
         contexteGraphique.fillRect(joueur.getX(), joueur.getY(), joueur.getWidth(), joueur.getHeight());
     }
 
@@ -201,7 +283,7 @@ public class Room1 implements IEtat {
 
     @Override
     public void enFermeture() {
-        vue.setImage(null);
+        vueJoueurSprite.setImage(null);
         transition = null;
     }
 

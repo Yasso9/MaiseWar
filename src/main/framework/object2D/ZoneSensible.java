@@ -24,7 +24,7 @@ public class ZoneSensible extends Zone {
         mouvementPersonnageAutorises.add(mouvementPersonnage);
     }
 
-    public boolean personnageSurZoneSensible() {
+    public boolean personnageEstSurSaZoneSensible() {
 
         boolean declencherZone = false;
 

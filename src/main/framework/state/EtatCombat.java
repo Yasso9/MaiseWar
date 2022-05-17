@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import main.framework.object2D.ZoneSensible;
 
 public class EtatCombat implements IEtat {
 
@@ -42,15 +45,19 @@ public class EtatCombat implements IEtat {
             if (e.getCode() == KeyCode.ENTER) {
                 System.out.println("Pressed Enter!");
                 PileEtat.precedentEtat();
+                System.out.println(PileEtat.precedentEtat().getEnnemi().getNom());
                 enSortie();
             }
         });
     }
 
     @Override
-    public void afficher() {
-        contexteGraphique.setFill(Color.BLUE);
+    public void afficher(long currentTime) {
+        contexteGraphique.setFill(Color.GREEN);
         contexteGraphique.fillRect(0, 0, 512, 512);
+        contexteGraphique.setFill(Color.WHITE);
+        contexteGraphique.setFont(Font.font("Verdana", FontWeight.MEDIUM, 14));
+        contexteGraphique.fillText("New Game", 64, 384);
     }
 
     @Override
@@ -62,6 +69,11 @@ public class EtatCombat implements IEtat {
     @Override
     public void enFermeture() {
 
+    }
+
+    @Override
+    public ZoneSensible getEnnemi() {
+        return null;
     }
 
 }
