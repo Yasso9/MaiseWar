@@ -44,8 +44,9 @@ public class CombatState implements IState {
         scene.setOnKeyPressed( e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 System.out.println("Pressed Enter!");
-                StateStack.pop();
-                onExit();
+                //StateStack.pop();
+                //onExit();
+                StateStack.push("mainmenu");
             }
         });
     }
@@ -55,7 +56,7 @@ public class CombatState implements IState {
 //        graphicsContext.setFill(Color.RED);
 //        graphicsContext.fillRect(0, 0, 512, 512);
 
-        graphicsContext.fillText("you win",256,256,512);
+        graphicsContext.fillText("you loose",256,256,512);
 
 
 

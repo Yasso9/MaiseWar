@@ -157,6 +157,10 @@ public class Character2D extends GameObject2D {
         collisions.addAll(gameObject2D);
     }
 
+    public void deleteCollision(GameObject2D gameObject2D){
+        collisions.remove(gameObject2D);
+    }
+
     public String getVerticalCollision() {
         String collided = "NONE";
 

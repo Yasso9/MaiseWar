@@ -17,6 +17,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import main.framework.animation.SpriteAnimator;
+import main.framework.entities.Character;
 import main.framework.game.PlayerProperties;
 import main.framework.object2D.Character2D;
 import main.framework.controller.Controller;
@@ -26,6 +27,7 @@ import main.framework.object2D.Hotspot;
 import main.framework.state.IState;
 import main.framework.state.StateStack;
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Timer;
 
@@ -56,6 +58,7 @@ public class Room1 implements IState {
     private Character2D player;
     private ArrayList<GameObject2D> sideWalls;
     private GameObject2D talker2D;
+    private GameObject2D enemy2D;
     private GameObject2D potion2D;
     private GameObject2D key2D;
     // hotspots
@@ -68,6 +71,10 @@ public class Room1 implements IState {
     private Controller playerController;
     private Mover playerMover;
     private ImageView imageView;
+
+    private Character enemyCharacter;
+    private Character talkerCharacter;
+    private Character playerCharacter;
 
     // sprite
     Image tileset;
@@ -82,6 +89,12 @@ public class Room1 implements IState {
     Image gokuSuperSaiyanGod;
 
     SpriteAnimator animator;
+
+
+
+    LocalDateTime oldDate = LocalDateTime.now();
+    int oldEnemyHitSeconds = oldDate.toLocalTime().toSecondOfDay();
+
     /**---------------------------------------------------------------------**/
 
     public Room1(Scene scene, GraphicsContext graphicsContext) {
@@ -115,6 +128,8 @@ public class Room1 implements IState {
         player = new Character2D("player", /*w*/20, /*h*/20, /*x*/560, /*y*/560, 2); // always make x and y even
         playerController = new Controller(scene);
         playerMover = new Mover(playerController, player);
+
+        playerCharacter = new Character("player", 100, 10,1);
 
         // 2d game objects (objects with no collisions)
         sideWalls = new ArrayList<>();
@@ -228,18 +243,6 @@ public class Room1 implements IState {
         perspectiveCamera.setTranslateY(player.getY());
         perspectiveCamera.setTranslateX(player.getX());
 
-        if (enemy != null) {
-            if (enemy.isCharacterOnHotspot()) {
-                System.out.println("Player is standing on door!");
-                StateStack.push("combat");
-                enemy = null;
-                gokuTransformation(gokuSuperSaiyanGod);
-                gokulvl = "gokuSuperSaiyanGod";
-                score+=100;
-                onExit();
-            }
-        }
-
         if (potion!=null){
 
             if (potion.isCharacterOnHotspot() ){
@@ -292,9 +295,9 @@ public class Room1 implements IState {
         }
 
         // combat initiator hotspot
-        if(enemy != null)
+        /*if(enemy != null)
             graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-
+        */
         graphicsContext.drawImage(playerSprite, 192, 224, 32, 32, talker2D.getX(), talker2D.getY(), talker2D.getWidth(), talker2D.getHeight());
 
         graphicsContext.setFill((talker.isCharacterOnHotspot()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
@@ -309,6 +312,41 @@ public class Room1 implements IState {
         if (key!=null)
             graphicsContext.drawImage(keyItem, 0, 0, 32, 32, key2D.getX(), key2D.getY(), key2D.getWidth(), key2D.getHeight());
 //        key =
+
+
+        if (enemy != null) {
+            graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+            if(enemy.isCharacterOnHotspot()) {
+                graphicsContext.drawImage(otherSprites, 64, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+
+                LocalDateTime date = LocalDateTime.now();
+                int secondsNow = date.toLocalTime().toSecondOfDay();
+
+                if(secondsNow >= oldEnemyHitSeconds + enemyCharacter.getAttackPeriod()){
+                    System.out.println("Attaque en cours");
+                    enemyCharacter.attack(playerCharacter);
+                    oldEnemyHitSeconds = secondsNow;
+                }
+                if(playerController.getInputs().size() >= 1){
+                    if(playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")){
+                        playerController.getInputs().clear();
+                        playerCharacter.attack(enemyCharacter);
+                        oldEnemyHitSeconds = secondsNow;
+                    }
+                }
+
+                if(!enemyCharacter.isAlive()){
+                    player.deleteCollision(enemy2D);
+                    enemy = null;
+                }
+
+                if(!playerCharacter.isAlive()){
+                    //root.getChildren().remove(imageView);
+                    StateStack.push("combat");
+                    onExit();
+                }
+            }
+        }
     }
 
 
@@ -344,36 +382,50 @@ public class Room1 implements IState {
                         sideWalls.add(new GameObject2D("wall", 32, 32, x, y));
                     }
 
-                    switch (tab[i]){
+                    switch(tab[i]){
                         case "1":
                             sideWalls.add(new GameObject2D("wall", 32, 32, x, y));
+
                             break;
                         case "2":
-                            enemy = new Hotspot("door", 32, 32 , x, y); // combat initiator
+                            enemyCharacter = new Character("enemy", 32, 32 , x, y, 100, 10, 1);
+                            enemy = enemyCharacter.createCharacterHotSpot();
+
+                            enemy2D = enemyCharacter.createCharacterGameObject2D();
+
+                            //enemy = new Hotspot("door", 32, 32 , x, y); // combat initiator
                             enemy.addTriggerCharacter(player);
+                            //enemy2D = new GameObject2D("enemy", 32,32, x, y);
+                            player.addCollision(enemy2D);
 
                             break;
                         case "3":
-                            talker = new Hotspot("talker", 64, 64, x, y); // dialogue initiator
-                            talker.addTriggerCharacter(player);
-                            talker2D = new GameObject2D("talker", 32, 32, x, y);
+                            //talker = new Hotspot("talker", 64, 64, x, y); // dialogue initiator
+                            //talker2D = new GameObject2D("talker", 32, 32, x, y);
 
+                            talkerCharacter = new Character("enemy", 32, 32 , x, y);
+                            talker = talkerCharacter.createCharacterHotSpot();
+
+                            talker2D = talkerCharacter.createCharacterGameObject2D();
+
+                            talker.addTriggerCharacter(player);
                             player.addCollision(talker2D); // add a collision to talker
+
                             break;
                         case"4":
                             potion2D = new GameObject2D("postion",32,32,x,y);
-
                             potion = new Hotspot("potion", 64, 64, x, y); // dialogue initiator
                             potion.addTriggerCharacter(player);
                             System.out.println(x+"---potion--"+y);
+
                             break;
                         case"5":
                             key2D = new GameObject2D("key",32,32, x, y);
                             key = new Hotspot("key",64,64, x, y);
                             key.addTriggerCharacter(player);
                             System.out.println(x+"---------------key"+y);
-                            break;
 
+                            break;
                     }
                     x+=32;
                 }
@@ -396,11 +448,7 @@ public class Room1 implements IState {
         root.getChildren().add(imageView);
 
         // instantiates sprite animator
-        animator = new SpriteAnimator( imageView,
-                Duration.millis(300), 3, 3, /* offsetX */ 0, /* offsetY */ 0, 32, 32
-        );
-
-
+        animator = new SpriteAnimator(imageView, Duration.millis(300), 3, 3, /* offsetX */ 0, /* offsetY */ 0, 32, 32);
     }
 
     public void setTimer(){
