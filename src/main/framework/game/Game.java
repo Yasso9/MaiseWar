@@ -42,6 +42,7 @@ public class Game extends Application {
         StateStack.addState("combat", new CombatState(scene, gc));
         StateStack.addState("potion", new ItemsState(scene, gc,"potion"));
         StateStack.addState("key", new ItemsState(scene,gc,"key"));
+        StateStack.addState("weapon", new ItemsState(scene,gc,"weapon"));
 
 
         StateStack.push("mainmenu");
