@@ -20,6 +20,7 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import main.framework.animation.SpriteAnimator;
 import main.framework.entities.Character;
+import main.framework.entities.Item;
 import main.framework.game.PlayerProperties;
 import main.framework.object2D.Character2D;
 import main.framework.controller.Controller;
@@ -106,9 +107,11 @@ public class Room1 implements IState {
     Image tileset;
     Image playerSprite; // player sprite playerSprite
     Image otherSprites;
-    Image potionItem;
-    Image keyItem;
+
+
     Image enemyCombat;
+    Image potionImage;
+    Image keyImage;
 
     //Goku Transformation
     Image gokuNormale;
@@ -117,7 +120,7 @@ public class Room1 implements IState {
 
     SpriteAnimator animator;
 
-
+    Item keyItem;
 
     LocalDateTime oldDate = LocalDateTime.now();
     int oldEnemyHitSeconds = oldDate.toLocalTime().toSecondOfDay();
@@ -215,7 +218,7 @@ public class Room1 implements IState {
         playerSprite = new Image(getClass().getResourceAsStream("../resources/sprites.png"));
         otherSprites = new Image(getClass().getResourceAsStream("../resources/EntitySet.png"));
         tileset = new Image(getClass().getResourceAsStream("../resources/tileset.png"));
-        potionItem = new Image(getClass().getResourceAsStream("../resources/shield_plat.png"));
+        potionImage = new Image(getClass().getResourceAsStream("../resources/shield_plat.png"));
 
         gokuNormale = new Image(getClass().getResourceAsStream("../resources/goku.png"));
         gokuSuperSaiyan = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan.png"));
@@ -223,7 +226,7 @@ public class Room1 implements IState {
         enemyCombat = new Image(getClass().getResourceAsStream("../resources/enemy.png"));
 
         try {
-            keyItem = new Image(getClass().getResourceAsStream("../resources/key.png"));
+            keyImage = new Image(getClass().getResourceAsStream("../resources/key.png"));
         }catch (Exception e){
             System.out.println(e.getCause());
         }
@@ -265,7 +268,6 @@ public class Room1 implements IState {
         perspectiveCamera.setTranslateX(player.getX());
 
         if (potion!=null){
-
             if (potion.isCharacterOnHotspot() ){
                 System.out.println("Player is standing on potion!");
                 StateStack.push("potion");
@@ -279,9 +281,9 @@ public class Room1 implements IState {
         }
 
         if (key!=null){
-
             if(key.isCharacterOnHotspot()){
                 System.out.println("player is standing on key");
+                playerCharacter.addToInventory(keyItem);
                 StateStack.push("key");
                 key=null;
                 gokuTransformation(gokuSuperSaiyan);
@@ -289,6 +291,7 @@ public class Room1 implements IState {
                 System.out.println(player.getName());
                 score+=100;
                 onExit();
+                
             }
         }
 
@@ -329,13 +332,13 @@ public class Room1 implements IState {
         graphicsContext.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
 
-//        graphicsContext.drawImage(potionItem, 0, 0, 32, 32, 688, 688, 32, 32);
+//        graphicsContext.drawImage(potionImage, 0, 0, 32, 32, 688, 688, 32, 32);
         if (potion!=null)
-            graphicsContext.drawImage(potionItem, 0, 0, 32, 32, potion2D.getX(), potion2D.getY(), potion2D.getWidth(), potion2D.getHeight());
+            graphicsContext.drawImage(potionImage, 0, 0, 32, 32, potion2D.getX(), potion2D.getY(), potion2D.getWidth(), potion2D.getHeight());
 
 
         if (key!=null)
-            graphicsContext.drawImage(keyItem, 0, 0, 32, 32, key2D.getX(), key2D.getY(), key2D.getWidth(), key2D.getHeight());
+            graphicsContext.drawImage(keyImage, 0, 0, 32, 32, key2D.getX(), key2D.getY(), key2D.getWidth(), key2D.getHeight());
 //        key =
 
 
@@ -352,12 +355,14 @@ public class Room1 implements IState {
                     enemyCharacter.attack(playerCharacter);
                     oldEnemyHitSeconds = secondsNow;
                 }
-                if(playerController.getInputs().size() >= 1){
-                    if(playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")){
-                        graphicsContext.drawImage(enemyCombat, 0, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-                        playerController.getInputs().clear();
-                        playerCharacter.attack(enemyCharacter);
-                        oldEnemyHitSeconds = secondsNow;
+
+                if(playerCharacter.getInventory().contains(keyItem)){
+                    if(playerController.getInputs().size() >= 1){
+                        if(playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")){
+                            playerController.getInputs().clear();
+                            playerCharacter.attack(enemyCharacter);
+                            oldEnemyHitSeconds = secondsNow;
+                        }
                     }
                 }
 
@@ -447,6 +452,7 @@ public class Room1 implements IState {
 
                             break;
                         case"5":
+                            keyItem = new Item("key");
                             key2D = new GameObject2D("key",32,32, x, y);
                             key = new Hotspot("key",64,64, x, y);
                             key.addTriggerCharacter(player);

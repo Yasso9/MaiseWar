@@ -3,6 +3,8 @@ package main.framework.entities;
 import main.framework.object2D.GameObject2D;
 import main.framework.object2D.Hotspot;
 
+import java.util.ArrayList;
+
 public class Character {
     
     private String name;
@@ -14,6 +16,9 @@ public class Character {
     private double healthPoints;
     private double damagePoints;
     private int attackPeriod; //in seconds
+
+    private ArrayList<Item> inventory = new ArrayList<>();
+
 
     public Character(String name, double width, double height, double positionX, double positionY,  double healthPoints, double damagePoints, int attackPeriod){
         this.name = name;
@@ -78,4 +83,13 @@ public class Character {
     public void setHasKey(Boolean hasKey) {
         this.hasKey = hasKey;
     }
+    public void addToInventory(Item item){
+        this.inventory.add(item);
+    }
+
+    public ArrayList<Item> getInventory(){
+        return this.inventory;
+    }
+
+
 }
