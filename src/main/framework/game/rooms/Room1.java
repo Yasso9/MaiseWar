@@ -1,6 +1,7 @@
 package main.framework.game.rooms;
 
 import javafx.animation.Animation;
+import javafx.embed.swing.JFXPanel;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import main.framework.animation.SpriteAnimator;
 import main.framework.entities.Character;
@@ -26,12 +28,15 @@ import main.framework.object2D.GameObject2D;
 import main.framework.object2D.Hotspot;
 import main.framework.state.IState;
 import main.framework.state.StateStack;
+
+import javax.swing.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Timer;
 
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import static main.framework.game.Game.root;
 
@@ -49,14 +54,35 @@ public class Room1 implements IState {
     private PerspectiveCamera perspectiveCamera;
     private Stage dialog;
     private VBox dialogVbox = new VBox(20);
-    private Text scoreAndTime = new Text("Score : "+this.score+" time : 0");
+    private Text playerHP = new Text();
+    private Text scoreAndTime = new Text();
     private Scene dialogScene;
     private Timer timer = new Timer();
+    private float timecounter = 0;
+    private int minute = 0;
+    private int seconde =0;
+
+    TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            if (getSecondecounter()==59){
+                setSecondecounter(0);
+                setMinutecounter(getMinutecounter()+1);
+                System.out.println(getMinutecounter()+" : "+getSecondecounter());
+            }
+            setSecondecounter(getSecondecounter()+1);
+            System.out.println(getMinutecounter()+" : "+getSecondecounter());
+
+            scoreAndTime.setText("Score : "+getScore()+" time : "+getMinutecounter()+" : "+getSecondecounter());
+        }
+    };
+
     /**---------------------------------**/
 
     /**--------------------------- game objects ----------------------------**/
     private Character2D player;
     private ArrayList<GameObject2D> sideWalls;
+    private ArrayList<GameObject2D> sideDoor;
     private GameObject2D talker2D;
     private GameObject2D enemy2D;
     private GameObject2D potion2D;
@@ -82,6 +108,7 @@ public class Room1 implements IState {
     Image otherSprites;
     Image potionItem;
     Image keyItem;
+    Image enemyCombat;
 
     //Goku Transformation
     Image gokuNormale;
@@ -133,7 +160,7 @@ public class Room1 implements IState {
 
         // 2d game objects (objects with no collisions)
         sideWalls = new ArrayList<>();
-
+        sideDoor = new ArrayList<>();
         // invisible walls instantiation
         for(int x = 512; x <= 2080; x+= 32) {
             sideWalls.add(new GameObject2D("wall", 32, 32, x, 512));
@@ -168,27 +195,21 @@ public class Room1 implements IState {
 //        final Stage dialog = new Stage();
 
 
-        dialog = new Stage();
+        dialog = new Stage(StageStyle.UTILITY);
         dialog.initModality(Modality.NONE);
 
         dialogVbox.getChildren().add(scoreAndTime);
-        dialogScene = new Scene(dialogVbox, 200, 40);
+        dialogVbox.getChildren().add(playerHP);
+        dialogScene = new Scene(dialogVbox, 200, 60);
         dialog.setScene(dialogScene);
-
+        dialog.setAlwaysOnTop(true);
         dialog.show();
+
+        timer.schedule(timerTask, 1000,1000);
 
         dialog.setX(0);
         dialog.setY(0);
 
-//        scorePopup = new Popup();
-//
-//        this.scorelabel.setStyle(" -fx-background-color: white;");
-//        scorePopup.getContent().add(this.scorelabel);
-//
-//        // set size of label
-//        this.scorelabel.setMinWidth(80);
-//        this.scorelabel.setMinHeight(50);
-//        scorePopup.show();
 
         // set up images
         playerSprite = new Image(getClass().getResourceAsStream("../resources/sprites.png"));
@@ -199,6 +220,7 @@ public class Room1 implements IState {
         gokuNormale = new Image(getClass().getResourceAsStream("../resources/goku.png"));
         gokuSuperSaiyan = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan.png"));
         gokuSuperSaiyanGod = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan_god.png"));
+        enemyCombat = new Image(getClass().getResourceAsStream("../resources/enemy.png"));
 
         try {
             keyItem = new Image(getClass().getResourceAsStream("../resources/key.png"));
@@ -227,7 +249,6 @@ public class Room1 implements IState {
         graphicsContext.setFill(Color.BLACK);
         graphicsContext.fillRect(0, 0, 2048, 2048);
 //        hpAndTime.fillText("score : "+this.score+" . time : ",512,512,40);
-        scoreAndTime.setText("score : "+this.score+" . time : ");
         player = PlayerProperties.Player1.getCharacter2D();
         playerController = new Controller(scene);
         playerMover = new Mover(playerController, player);
@@ -276,12 +297,12 @@ public class Room1 implements IState {
             StateStack.push("gameMenu");
         }
 
-        scoreAndTime.setText("score : "+this.score+" . time : ");
+        scoreAndTime.setText("score : "+this.score+" . time : "+getMinutecounter()+" : "+getSecondecounter());
+        playerHP.setText("HP : "+playerCharacter.getHealthPoints());
     }
 
     @Override
     public void draw() {
-
         // draw grass floor
         for (int y = 512; y <= 1536; y += 32) {
             for (int x = 512; x <= 2101; x += 32) {
@@ -292,6 +313,10 @@ public class Room1 implements IState {
         // draw walls
         for (GameObject2D wall : sideWalls) {
             graphicsContext.drawImage(tileset, 32, 0, 32, 32, wall.getX(), wall.getY(), wall.getHeight(), wall.getWidth());
+        }
+
+        for (GameObject2D door : sideDoor){
+            graphicsContext.drawImage(tileset, 64, 0, 32, 32, door.getX(), door.getY(), door.getHeight(), door.getWidth());
         }
 
         // combat initiator hotspot
@@ -317,7 +342,7 @@ public class Room1 implements IState {
         if (enemy != null) {
             graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
             if(enemy.isCharacterOnHotspot()) {
-                graphicsContext.drawImage(otherSprites, 64, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+                graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
 
                 LocalDateTime date = LocalDateTime.now();
                 int secondsNow = date.toLocalTime().toSecondOfDay();
@@ -329,6 +354,7 @@ public class Room1 implements IState {
                 }
                 if(playerController.getInputs().size() >= 1){
                     if(playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")){
+                        graphicsContext.drawImage(enemyCombat, 0, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
                         playerController.getInputs().clear();
                         playerCharacter.attack(enemyCharacter);
                         oldEnemyHitSeconds = secondsNow;
@@ -355,6 +381,7 @@ public class Room1 implements IState {
         scene.setOnKeyPressed(null);
         scene.setOnKeyReleased(null);
         animator.stop();
+
         // set global player properties
         PlayerProperties.Player1.setCharacter2D(player);
     }
@@ -363,6 +390,7 @@ public class Room1 implements IState {
     public void onClose() {
         imageView.setImage(null);
         animator = null;
+        dialog.hide();
     }
 
 
@@ -385,7 +413,6 @@ public class Room1 implements IState {
                     switch(tab[i]){
                         case "1":
                             sideWalls.add(new GameObject2D("wall", 32, 32, x, y));
-
                             break;
                         case "2":
                             enemyCharacter = new Character("enemy", 32, 32 , x, y, 100, 10, 1);
@@ -426,6 +453,8 @@ public class Room1 implements IState {
                             System.out.println(x+"---------------key"+y);
 
                             break;
+                        case"6":
+                            sideDoor.add(new GameObject2D("door", 32, 32, x, y));
                     }
                     x+=32;
                 }
@@ -451,13 +480,25 @@ public class Room1 implements IState {
         animator = new SpriteAnimator(imageView, Duration.millis(300), 3, 3, /* offsetX */ 0, /* offsetY */ 0, 32, 32);
     }
 
-    public void setTimer(){
-        long startTime = System.currentTimeMillis();
-        long elapsedTime = 0L;
 
-        while (elapsedTime < 2*60*1000) {
-            //perform db poll/check
-            elapsedTime = (new Date()).getTime() - startTime;
-        }
+
+    public int getSecondecounter() {
+        return seconde;
+    }
+
+    public void setSecondecounter(int seconde) {
+        this.seconde = seconde;
+    }
+
+    public int getMinutecounter() {
+        return minute;
+    }
+
+    public void setMinutecounter(int minute) {
+        this.minute = minute;
+    }
+
+    public int getScore() {
+        return score;
     }
 }
