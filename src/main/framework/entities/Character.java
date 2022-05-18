@@ -12,7 +12,7 @@ public class Character {
     private double height;
     private double positionX;
     private double positionY;
-
+    private Boolean hasKey=false;
     private double healthPoints;
     private double damagePoints;
     private int attackPeriod; //in seconds
@@ -71,6 +71,18 @@ public class Character {
         return alive;
     }
 
+    public double getHealthPoints() {
+        return healthPoints;
+    }
+
+
+    public Boolean getHasKey() {
+        return hasKey;
+    }
+
+    public void setHasKey(Boolean hasKey) {
+        this.hasKey = hasKey;
+    }
     public void addToInventory(Item item){
         this.inventory.add(item);
     }
@@ -78,5 +90,6 @@ public class Character {
     public ArrayList<Item> getInventory(){
         return this.inventory;
     }
+
 
 }

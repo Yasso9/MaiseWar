@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/mazewar.iml" filepath="$PROJECT_DIR$/mazewar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mazewarMaster.iml" filepath="$PROJECT_DIR$/mazewarMaster.iml" />
     </modules>
   </component>
 </project>
