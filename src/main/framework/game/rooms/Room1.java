@@ -92,7 +92,7 @@ public class Room1 implements IState {
     private Hotspot talker;
     private Hotspot potion;
     private Hotspot key;
-    private int score =0 ;
+    private int score = 0;
     // player properties
     private Controller playerController;
     private Mover playerMover;
@@ -218,7 +218,7 @@ public class Room1 implements IState {
         potionItem = new Image(getClass().getResourceAsStream("../resources/shield_plat.png"));
 
         gokuNormale = new Image(getClass().getResourceAsStream("../resources/goku.png"));
-        gokuSuperSaiyan = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan.png"));
+        gokuSuperSaiyan = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan_god.png"));
         gokuSuperSaiyanGod = new Image(getClass().getResourceAsStream("../resources/goku_super_saiyan_god.png"));
         enemyCombat = new Image(getClass().getResourceAsStream("../resources/enemy.png"));
 
