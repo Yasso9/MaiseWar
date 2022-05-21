@@ -3,39 +3,30 @@ package main.framework.entities;
 import main.framework.object2D.GameObject2D;
 import main.framework.object2D.Hotspot;
 
-public class Character {
+import java.util.ArrayList;
+
+public class Character extends Entity {
     
-    private String name;
-    private double width;
-    private double height;
-    private double positionX;
-    private double positionY;
-    private Boolean hasKey=false;
     private double healthPoints;
     private double damagePoints;
     private int attackPeriod; //in seconds
 
+    private ArrayList<Item> inventory = new ArrayList<>();
+
+
     public Character(String name, double width, double height, double positionX, double positionY,  double healthPoints, double damagePoints, int attackPeriod){
-        this.name = name;
+        super(name, width, height, positionX, positionY);
         this.healthPoints = healthPoints;
         this.damagePoints = damagePoints;
         this.attackPeriod = attackPeriod;
-        this.width = width;
-        this.height = height;
-        this.positionX = positionX;
-        this.positionY = positionY;
     }
 
     public Character(String name, double width, double height, double positionX, double positionY){
-        this.name = name;
-        this.width = width;
-        this.height = height;
-        this.positionX = positionX;
-        this.positionY = positionY;
+        super(name, width, height, positionX, positionY);
     }
 
     public Character(String name,  double healthPoints, double damagePoints, int attackPeriod){
-        this.name = name;
+        super(name);
         this.healthPoints = healthPoints;
         this.damagePoints = damagePoints;
         this.attackPeriod = attackPeriod;
@@ -43,19 +34,11 @@ public class Character {
 
     public void attack(Character personnageVictime){
         personnageVictime.healthPoints = personnageVictime.healthPoints - this.damagePoints;
-        System.out.println(personnageVictime.healthPoints + " de " + personnageVictime.name);
+        System.out.println(personnageVictime.healthPoints + " de " + personnageVictime.getName());
     }
 
     public int getAttackPeriod(){
         return this.attackPeriod;
-    }
-
-    public Hotspot createCharacterHotSpot(){
-        return new Hotspot(this.name, this.width, this.height, this.positionX, this.positionY);
-    }
-
-    public GameObject2D createCharacterGameObject2D(){
-        return new GameObject2D(this.name, this.width, this.height, this.positionX, this.positionY);
     }
 
     public boolean isAlive(){
@@ -67,15 +50,16 @@ public class Character {
     }
 
     public double getHealthPoints() {
-        return healthPoints;
+        return this.healthPoints;
+    }
+
+    public void addToInventory(Item item){
+        this.inventory.add(item);
+    }
+
+    public ArrayList<Item> getInventory(){
+        return this.inventory;
     }
 
 
-    public Boolean getHasKey() {
-        return hasKey;
-    }
-
-    public void setHasKey(Boolean hasKey) {
-        this.hasKey = hasKey;
-    }
 }

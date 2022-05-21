@@ -60,6 +60,9 @@ public class ItemsState implements IState {
         if (item.equals("key"))
             graphicsContext.fillText("you get key :) ",256,256,512);
 
+        if (item.equals("weapon"))
+            graphicsContext.fillText("you get weapon :) ",256,256,512);
+
     }
 
     @Override
