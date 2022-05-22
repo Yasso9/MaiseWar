@@ -10,8 +10,6 @@ public class Controller {
     private ArrayList<String> input;
     private boolean disabled = false;
 
-    // constructor
-
     public Controller(Scene scene) {
 
         input = new ArrayList<>();
@@ -21,7 +19,6 @@ public class Controller {
             String keyCode = e.getCode().toString();
             if (!disabled && !input.contains(keyCode))
                 input.add(keyCode);
-
         });
 
         scene.setOnKeyReleased(e -> {
@@ -29,11 +26,8 @@ public class Controller {
             String keyCode = e.getCode().toString();
             if (input.contains(keyCode))
                 input.remove(keyCode);
-
         });
     }
-
-    // public methods
 
     public ArrayList<String> getInputs() {
         return input;

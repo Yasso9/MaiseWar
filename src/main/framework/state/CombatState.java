@@ -12,13 +12,9 @@ import main.framework.game.rooms.Room1;
 
 public class CombatState implements IState {
 
-    /**----------------------------------**/
-
     private Scene scene;
     private PerspectiveCamera camera;
     private GraphicsContext graphicsContext;
-
-    /**----------------------------------**/
 
     private Character playerCharacter;
 
@@ -43,9 +39,6 @@ public class CombatState implements IState {
     public void update(long currentTime) {
         scene.setOnKeyPressed( e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                System.out.println("Pressed Enter!");
-                //StateStack.pop();
-                //onExit();
                 StateStack.push("mainmenu");
             }
         });
@@ -53,16 +46,7 @@ public class CombatState implements IState {
 
     @Override
     public void draw() {
-//        graphicsContext.setFill(Color.RED);
-//        graphicsContext.fillRect(0, 0, 512, 512);
-
-        graphicsContext.fillText("you loose",256,256,512);
-
-
-
-
-        // graphicsContext.
-
+        graphicsContext.fillText("Game over !",256,256,512);
     }
 
     @Override

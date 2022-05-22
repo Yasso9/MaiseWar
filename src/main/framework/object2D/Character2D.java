@@ -30,9 +30,6 @@ public class Character2D extends GameObject2D {
         this.setVelocity(velocity);
     }
 
-
-    /** ============================= GETTERS ============================== **/
-
     public boolean isFacingRight() {
         boolean facing = false;
         if (isFacingRight && !isFacingDown && !isFacingUp && !isFacingLeft) facing = true;
@@ -57,39 +54,6 @@ public class Character2D extends GameObject2D {
         return facing;
     }
 
-    // diagonal
-    public boolean isFacingUpRight() {
-        boolean facing = false;
-        if (isFacingRight && isFacingUp) facing = true;
-
-        return facing;
-    }
-
-    public boolean isFacingUpLeft() {
-        boolean facing = false;
-        if (isFacingLeft && isFacingUp) facing = true;
-
-        return facing;
-    }
-
-    public boolean isFacingDownRight() {
-        boolean facing = false;
-        if (isFacingRight && isFacingDown) facing = true;
-
-        return facing;
-    }
-
-    public boolean isFacingDownLeft() {
-        boolean facing = false;
-        if (isFacingDown && isFacingLeft) facing = true;
-
-        return facing;
-    }
-
-
-    /** =========================== SETTERS =========================== **/
-
-    // face setters
     public void setFaceRight() {
         isFacingRight = true;
         isFacingDown = false;
@@ -118,37 +82,6 @@ public class Character2D extends GameObject2D {
         isFacingLeft = false;
     }
 
-    // diagonal faces
-    public void setFaceUpRight() {
-        isFacingRight = true;
-        isFacingDown = false;
-        isFacingUp = true;
-        isFacingLeft = false;
-    }
-
-    public void setFaceUpLeft() {
-        isFacingRight = false;
-        isFacingDown = false;
-        isFacingUp = true;
-        isFacingLeft = true;
-    }
-
-    public void setFaceDownRight() {
-        isFacingRight = true;
-        isFacingDown = true;
-        isFacingUp = false;
-        isFacingLeft = false;
-    }
-
-    public void setFaceDownLeft() {
-        isFacingRight = false;
-        isFacingDown = true;
-        isFacingUp = false;
-        isFacingLeft = true;
-    }
-
-    /** ==================== COLLISION ============================ **/
-
     public void addCollision(GameObject2D gameObject2D) {
         collisions.add(gameObject2D);
     }
@@ -167,10 +100,7 @@ public class Character2D extends GameObject2D {
     public String getVerticalCollision() {
         String collided = "NONE";
 
-        // look through the list of collisions for this entities
         for(GameObject2D c : collisions) {
-
-            // vertical check
             if(this.isFacingUp) {
                 if (c.getY() + c.getHeight() >= this.getY() && this.getY() + this.getHeight() > c.getY() + c.getHeight()
                         && ((this.getX() >= c.getX() && this.getX() + this.getWidth() <= c.getX() + c.getWidth()) ||
@@ -199,10 +129,8 @@ public class Character2D extends GameObject2D {
     }
 
     public String getHorizontalCollision() {
-        // horizontal check
         String collided = "NONE";
 
-        // look through the list of collisions for this entities
         for (GameObject2D c : collisions) {
             if (this.isFacingRight) {
                 if (this.getX() + this.getWidth() >= c.getX() && c.getX() > this.getX()
@@ -227,13 +155,6 @@ public class Character2D extends GameObject2D {
             }
         }
         return collided;
-    }
-
-
-    /** ============================== ACTION EVENT HANDLER ===================== **/
-
-    public void actionBy(Character2D c) {
-        // get action of Character2D c for this entities
     }
 
 }

@@ -6,14 +6,11 @@ public class GameObject2D extends Rectangle {
 
     private String name;
 
-    // movement and placement properties
     private double width;
     private double height;
     private double X;
     private double Y;
     private double velocity = 0;
-
-    /** ====================== CONSTRUCTOR ============================ **/
 
     public GameObject2D(String name, double width, double height, double x, double y) {
         this.name = name;
@@ -23,18 +20,13 @@ public class GameObject2D extends Rectangle {
         setY(y);
     }
 
-    /** ============================ GETTERS ================================ **/
-
     public String getName() {
         return name;
     }
 
-
     public double getVelocity() {
         return velocity;
     }
-
-    /** =========================== SETTERS ============================= **/
 
     public void setName(String name) {
         this.name = name;

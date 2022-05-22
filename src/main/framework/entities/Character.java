@@ -53,6 +53,10 @@ public class Character extends Entity {
         this.healthPoints = healthPoints;
     }
 
+    public void setDamagePoints(double damagePoints) {
+        this.damagePoints = damagePoints;
+    }
+
     public double getHealthPoints() {
         return this.healthPoints;
     }

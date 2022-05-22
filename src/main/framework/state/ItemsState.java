@@ -12,7 +12,6 @@ import main.framework.game.rooms.Room1;
 
 public class ItemsState implements IState {
 
-    /**----------------------------------**/
 
     private Scene scene;
     private PerspectiveCamera camera;
@@ -20,7 +19,6 @@ public class ItemsState implements IState {
     private String item;
     private int score;
     private String time;
-    /**----------------------------------**/
 
     private Character playerCharacter;
 
@@ -37,11 +35,11 @@ public class ItemsState implements IState {
         this.score = score;
         this.time = time;
     }
+
     @Override
     public void init() {
         scene.getCamera().setTranslateY(256);
         scene.getCamera().setTranslateX(256);
-
     }
 
     @Override
@@ -62,19 +60,19 @@ public class ItemsState implements IState {
 
     @Override
     public void draw() {
+        graphicsContext.setFill(Color.WHITE);
 
         if (item.equals("potion"))
-            graphicsContext.fillText("level up ",256,256,512);
+            graphicsContext.fillText("You received a shield !",128,256,512);
 
         if (item.equals("key"))
-            graphicsContext.fillText("you get key :) ",256,256,512);
+            graphicsContext.fillText("You received a key !",128,256,512);
 
         if (item.equals("weapon"))
-            graphicsContext.fillText("you get weapon :) ",256,256,512);
-
+            graphicsContext.fillText("You received a weapon !",128,256,512);
 
         if (item.equals("endGame"))
-            graphicsContext.fillText("you get weapon :) ",256,256,512);
+            graphicsContext.fillText("Game over !",128,256,512);
     }
 
     @Override
