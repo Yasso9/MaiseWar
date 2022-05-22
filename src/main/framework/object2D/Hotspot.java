@@ -1,5 +1,7 @@
 package main.framework.object2D;
 
+import main.framework.entities.Character;
+
 import java.util.ArrayList;
 
 
@@ -13,7 +15,7 @@ public class Hotspot extends GameObject2D {
      * @param x
      * @param y
      **/
-
+    private Character character;
     private ArrayList<Character2D> allowedCharacter2Ds = new ArrayList<>();
 
     public Hotspot(String name, double width, double height, double x, double y) {
@@ -39,4 +41,11 @@ public class Hotspot extends GameObject2D {
         return triggered;
     }
 
+    public Character getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(Character character) {
+        this.character = character;
+    }
 }

@@ -49,6 +49,10 @@ public class Character extends Entity {
         return alive;
     }
 
+    public void setHealthPoints(double healthPoints) {
+        this.healthPoints = healthPoints;
+    }
+
     public double getHealthPoints() {
         return this.healthPoints;
     }

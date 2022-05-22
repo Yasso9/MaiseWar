@@ -8,6 +8,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
 import main.framework.game.PlayerProperties;
+import main.framework.game.rooms.Room1;
 
 public class ItemsState implements IState {
 
@@ -17,7 +18,8 @@ public class ItemsState implements IState {
     private PerspectiveCamera camera;
     private GraphicsContext graphicsContext;
     private String item;
-
+    private int score;
+    private String time;
     /**----------------------------------**/
 
     private Character playerCharacter;
@@ -28,6 +30,13 @@ public class ItemsState implements IState {
         this.item = item;
     }
 
+    public ItemsState(Scene scene, GraphicsContext graphicsContext,String item,int score, String time) {
+        this.scene = scene;
+        this.graphicsContext = graphicsContext;
+        this.item = item;
+        this.score = score;
+        this.time = time;
+    }
     @Override
     public void init() {
         scene.getCamera().setTranslateY(256);
@@ -63,6 +72,9 @@ public class ItemsState implements IState {
         if (item.equals("weapon"))
             graphicsContext.fillText("you get weapon :) ",256,256,512);
 
+
+        if (item.equals("endGame"))
+            graphicsContext.fillText("you get weapon :) ",256,256,512);
     }
 
     @Override

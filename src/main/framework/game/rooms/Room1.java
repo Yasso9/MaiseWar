@@ -9,6 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -59,11 +60,13 @@ public class Room1 implements IState {
     private Text playerHP = new Text();
     private Text scoreAndTime = new Text();
     private Scene dialogScene;
+    private GridPane inventaire = new GridPane();
+
     private Timer timer = new Timer();
     private float timecounter = 0;
     private int minute = 0;
     private int seconde =0;
-
+    int invIndex=0;
     TimerTask timerTask = new TimerTask() {
         @Override
         public void run() {
@@ -85,20 +88,25 @@ public class Room1 implements IState {
     private Character2D player;
     private ArrayList<GameObject2D> sideWalls;
     private ArrayList<GameObject2D> sideDoor;
+    private ArrayList<GameObject2D> enemyObjectArray;
     private GameObject2D talker2D;
     private GameObject2D enemy2D;
     private GameObject2D potion2D;
     private GameObject2D key2D;
     private GameObject2D weapon2D;
+    private GameObject2D heart2D;
     // hotspots
     private Hotspot enemy;
     private Hotspot talker;
     private Hotspot potion;
     private Hotspot key;
 
+    private ArrayList<Hotspot> enemyHotspotArray;
+
     private int score = 0;
 
     private Hotspot weapon;
+    private Hotspot heart;
     // player properties
     private Controller playerController;
     private Mover playerMover;
@@ -112,6 +120,7 @@ public class Room1 implements IState {
     Image tileset;
     Image playerSprite; // player sprite playerSprite
     Image otherSprites;
+    Image heartImage;
 
 
     Image enemyCombat;
@@ -130,6 +139,7 @@ public class Room1 implements IState {
     Item keyItem;
     Item weaponItem;
     Item potionItem;
+    Item heartItem;
 
     LocalDateTime oldDate = LocalDateTime.now();
     int oldEnemyHitSeconds = oldDate.toLocalTime().toSecondOfDay();
@@ -173,6 +183,8 @@ public class Room1 implements IState {
         // 2d game objects (objects with no collisions)
         sideWalls = new ArrayList<>();
         sideDoor = new ArrayList<>();
+        enemyObjectArray = new ArrayList<>();
+        enemyHotspotArray = new ArrayList<>();
 
         player.setName("goku");
         // invisible walls instantiation
@@ -213,7 +225,10 @@ public class Room1 implements IState {
 
         dialogVbox.getChildren().add(scoreAndTime);
         dialogVbox.getChildren().add(playerHP);
-        dialogScene = new Scene(dialogVbox, 200, 60);
+        dialogVbox.getChildren().add(inventaire);
+
+
+        dialogScene = new Scene(dialogVbox, 200, 110);
         dialog.setScene(dialogScene);
         dialog.setAlwaysOnTop(true);
         dialog.show();
@@ -236,6 +251,8 @@ public class Room1 implements IState {
             gokuSwordAndShield = new Image(new FileInputStream("src/main/framework/game/resources/goku_sword_shield.png"));
             enemyCombat = new Image(new FileInputStream("src/main/framework/game/resources/enemygif.gif"));
             keyImage = new Image(new FileInputStream("src/main/framework/game/resources/key.png"));
+            heartImage = new Image(new FileInputStream("src/main/framework/game/resources/heart.png"));
+
         }catch (Exception e){
             System.out.println(e.getCause());
         }
@@ -289,6 +306,8 @@ public class Room1 implements IState {
                     System.out.println("-------shield----------"+player.getName());
                 }
                 score+=100;
+                inventaire.add(new ImageView(shieldImage),invIndex,0);
+                invIndex+=1;
                 onExit();
             }
         }
@@ -302,6 +321,8 @@ public class Room1 implements IState {
                 key=null;
                 System.out.println(player.getName());
                 score+=100;
+                inventaire.add(new ImageView(keyImage),invIndex,0);
+                invIndex+=1;
                 onExit();
             }
         }
@@ -321,8 +342,21 @@ public class Room1 implements IState {
                 }
 
                 score+=100;
+                inventaire.add(new ImageView(weaponImage),invIndex,0);
+                invIndex+=1;
                 onExit();
             }
+        }
+
+
+        if (talker.isCharacterOnHotspot()){
+            scene.getCamera().setTranslateY(256);
+            scene.getCamera().setTranslateX(256);
+            timerTask.cancel();
+            graphicsContext.fillText("fin du jeu  ",256,256,512);
+            graphicsContext.fillText("votre score est :  "+getScore(),56,356,512);
+            graphicsContext.fillText("votre temps est :  "+getMinutecounter()+" : "+getSecondecounter(),56,156,512);
+            playerController.setDisabled(true);
         }
 
         if(playerController.getInputs().contains("ESCAPE")) {
@@ -362,24 +396,37 @@ public class Room1 implements IState {
             graphicsContext.drawImage(shieldImage, 0, 0, 32, 32, potion2D.getX(), potion2D.getY(), potion2D.getWidth(), potion2D.getHeight());
 
 
+
         if (key!=null)
             graphicsContext.drawImage(keyImage, 0, 0, 32, 32, key2D.getX(), key2D.getY(), key2D.getWidth(), key2D.getHeight());
+
 
         if (weapon!=null)
             graphicsContext.drawImage(weaponImage, 0, 0, 32, 32, weapon2D.getX(), weapon2D.getY(), weapon2D.getWidth(), weapon2D.getHeight());
 
 
-        if (enemy != null) {
-                graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-                if (enemy.isCharacterOnHotspot()) {
-                    graphicsContext.drawImage(enemyCombat, 0, 0, 32, 32, enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+
+
+        if (heart!=null){
+            graphicsContext.drawImage(heartImage, 0, 0, 32, 32, heart2D.getX(), heart2D.getY(), heart2D.getWidth(), heart2D.getHeight());
+            if(heart.isCharacterOnHotspot()){
+                playerCharacter.setHealthPoints(100);
+                heart = null;
+            }
+        }
+
+            for (int i = 0; i < enemyHotspotArray.size(); i++) {
+                if (enemyHotspotArray.get(i) != null) {
+                graphicsContext.drawImage(otherSprites, 128, 0, 32, 32, enemyHotspotArray.get(i).getX(), enemyHotspotArray.get(i).getY(), enemyHotspotArray.get(i).getWidth(), enemyHotspotArray.get(i).getHeight());
+                if ( enemyHotspotArray.get(i).isCharacterOnHotspot()) {
+                    graphicsContext.drawImage(enemyCombat, 0, 0, 32, 32, enemyHotspotArray.get(i).getX(), enemyHotspotArray.get(i).getY(), enemyHotspotArray.get(i).getWidth(), enemyHotspotArray.get(i).getHeight());
 
                     LocalDateTime date = LocalDateTime.now();
                     int secondsNow = date.toLocalTime().toSecondOfDay();
 
-                    if (secondsNow >= oldEnemyHitSeconds + enemyCharacter.getAttackPeriod()) {
+                    if (secondsNow >= oldEnemyHitSeconds + enemyHotspotArray.get(i).getCharacter().getAttackPeriod()) {
                         System.out.println("Attaque en cours");
-                        enemyCharacter.attack(playerCharacter);
+                        enemyHotspotArray.get(i).getCharacter().attack(playerCharacter);
                         oldEnemyHitSeconds = secondsNow;
                     }
 
@@ -387,15 +434,16 @@ public class Room1 implements IState {
                         if (playerController.getInputs().size() >= 1) {
                             if (playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")) {
                                 playerController.getInputs().clear();
-                                playerCharacter.attack(enemyCharacter);
+                                playerCharacter.attack(enemyHotspotArray.get(i).getCharacter());
                                 oldEnemyHitSeconds = secondsNow;
                             }
                         }
                     }
 
-                    if (!enemyCharacter.isAlive()) {
-                        player.deleteCollision(enemy2D);
-                        enemy = null;
+                    if (!enemyHotspotArray.get(i).getCharacter().isAlive()) {
+                        player.deleteCollision(enemyObjectArray.get(i));
+                        enemyHotspotArray.set(i,null);
+                        score+=100;
                     }
 
                     if (!playerCharacter.isAlive()) {
@@ -404,7 +452,7 @@ public class Room1 implements IState {
                         onExit();
                     }
                 }
-
+            }
         }
     }
 
@@ -436,6 +484,7 @@ public class Room1 implements IState {
             String[] tab;
             int x = 544;
             int y = 544;
+            int indexArray = 0;
             while ((st = br.readLine()) != null){
                 tab = st.split("");
                 for (int i = 0; i < tab.length; i++) {
@@ -448,14 +497,23 @@ public class Room1 implements IState {
                             sideWalls.add(new GameObject2D("wall", 32, 32, x, y));
                             break;
                         case "2":
+//                            enemyCharacter = new Character("enemy", 32, 32 , x, y, 100, 10, 1);
+//                            enemy = enemyCharacter.createHotSpot();
+//                            enemy2D = enemyCharacter.createGameObject2D();
+//
+//                            enemy.addTriggerCharacter(player);
+//                            player.addCollision(enemy2D);
+
                             enemyCharacter = new Character("enemy", 32, 32 , x, y, 100, 10, 1);
-                            enemy = enemyCharacter.createHotSpot();
-                            enemy2D = enemyCharacter.createGameObject2D();
+                            enemyHotspotArray.add(enemyCharacter.createHotSpot());
+                            enemyObjectArray.add(enemyCharacter.createGameObject2D());
 
-                            enemy.addTriggerCharacter(player);
-                            player.addCollision(enemy2D);
+                            enemyHotspotArray.get(indexArray).addTriggerCharacter(player);
+                            enemyHotspotArray.get(indexArray).setCharacter(enemyCharacter);
+                            player.addCollision(enemyObjectArray.get(indexArray));
 
 
+                            indexArray +=1;
                             break;
                         case "3":
                             talkerCharacter = new Character("enemy", 32, 32 , x, y);
@@ -493,6 +551,13 @@ public class Room1 implements IState {
                             weapon = weaponItem.createHotSpot();
 
                             weapon.addTriggerCharacter(player);
+                            break;
+                        case"8":
+                            heartItem = new Item("heart", 32, 32, x, y);
+                            heart2D = heartItem.createGameObject2D();
+                            heart = heartItem.createHotSpot();
+
+                            heart.addTriggerCharacter(player);
                             break;
                     }
                     x+=32;
