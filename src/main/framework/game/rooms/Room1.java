@@ -307,7 +307,7 @@ public class Room1 implements IState {
             scene.getCamera().setTranslateX(256);
             timerTask.cancel();
             graphicsContext.setFill(Color.WHITE);
-            graphicsContext.fillText("Game over !",256,256,512);
+            graphicsContext.fillText("You won !",256,256,512);
             graphicsContext.fillText("Your score :  "+getScore(),56,356,512);
             graphicsContext.fillText("Your time :  "+getMinutecounter()+"."+getSecondecounter(),56,156,512);
             playerController.setDisabled(true);
@@ -383,7 +383,7 @@ public class Room1 implements IState {
 
                     if (playerCharacter.getInventory().contains(weaponItem)) {
                         if (playerController.getInputs().size() >= 1) {
-                            if (playerController.getInputs().get(playerController.getInputs().size() - 1).equals("ENTER")) {
+                            if (playerController.getInputs().get(playerController.getInputs().size() - 1).equals("SPACE")) {
                                 playerController.getInputs().clear();
                                 playerCharacter.attack(enemyHotspotArray.get(i).getCharacter());
                                 oldEnemyHitSeconds = secondsNow;
