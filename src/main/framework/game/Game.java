@@ -12,11 +12,21 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import main.framework.entities.Entity;
 import main.framework.state.*;
 import main.framework.game.rooms.Room1;
 
 import java.awt.*;
 
+/**
+ * Game est la classe qui définit la boucle du jeu.
+ * Elle dérive de la classe Application.
+ * Cette classe est caractérisée par les informations suivantes :
+ * </p>
+ * </p>
+ * @author PCEBL
+ * @version 2.0
+ */
 public class Game extends Application {
 
     public static AnimationTimer gameLoop;
@@ -25,6 +35,9 @@ public class Game extends Application {
     private Canvas canvas;
     private GraphicsContext gc;
 
+    /**
+     * @throws Exception
+     */
     @Override
     public void init() throws Exception {
 
@@ -47,6 +60,12 @@ public class Game extends Application {
         StateStack.push("mainmenu");
     }
 
+    /**
+     * Démarre le jeu au premier niveau
+     * @param primaryStage
+     *      Le premier niveau
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
@@ -76,6 +95,9 @@ public class Game extends Application {
 
     }
 
+    /**
+     * @param args Entrées de l'utilisateur
+     */
     public static void main(String[] args) {
         launch(args);
     }

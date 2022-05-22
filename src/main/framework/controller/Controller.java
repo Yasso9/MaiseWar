@@ -5,11 +5,26 @@ import javafx.scene.Scene;
 
 import java.util.ArrayList;
 
+/**
+ * Controller est la classe qui contient la logique concernant les actions effectuées par l'utilisateur..
+ * </p>
+ * </p>
+ * @author PCEBL
+ * @version 2.0
+ */
 public class Controller {
 
+    /**
+     * Liste d'entrées de l'utilisateur
+     */
     private ArrayList<String> input;
     private boolean disabled = false;
 
+    /**
+     * <b>Constructeur de Character</b>
+     *
+     * @param scene
+     */
     public Controller(Scene scene) {
 
         input = new ArrayList<>();
@@ -29,6 +44,9 @@ public class Controller {
         });
     }
 
+    /**
+     * @return Les entrées de l'utilisateur
+     */
     public ArrayList<String> getInputs() {
         return input;
     }

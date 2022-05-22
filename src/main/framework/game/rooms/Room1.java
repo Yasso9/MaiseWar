@@ -43,18 +43,45 @@ import java.util.TimerTask;
 
 import static main.framework.game.Game.root;
 
+/**
+ * Room1 est la classe qui définie le premier labyrinthe.
+ * Elle dérive de la classe IState.
+ * </p>
+ * </p>
+ * @author PCEBL
+ * @version 2.0
+ * @see main.framework.state.IState
+ */
 public class Room1 implements IState {
 
     private String gokulvl = "normale";
 
+    /**
+     * La scène
+     */
     private final Scene scene;
     private final GraphicsContext graphicsContext;
+    /**
+     * Perspective de la caméra
+     */
     private PerspectiveCamera perspectiveCamera;
     private Stage dialog;
+    /**
+     * Boîte de dialogue
+     */
     private VBox dialogVbox = new VBox(20);
+    /**
+     * Texte contenant les poitns de vie du joueur
+     */
     private Text playerHP = new Text();
+    /**
+     * Texte contenant le score du joueur et le temps restant
+     */
     private Text scoreAndTime = new Text();
     private Scene dialogScene;
+    /**
+     * Inventaire du joueur
+     */
     private GridPane inventaire = new GridPane();
 
     private Timer timer = new Timer();
@@ -75,8 +102,17 @@ public class Room1 implements IState {
         }
     };
 
+    /**
+     * Joueur
+     */
     private Character2D player;
+    /**
+     * Mur
+     */
     private ArrayList<GameObject2D> sideWalls;
+    /**
+     * Porte
+     */
     private ArrayList<GameObject2D> sideDoor;
     private ArrayList<GameObject2D> enemyObjectArray;
     private GameObject2D talker2D;
@@ -91,6 +127,9 @@ public class Room1 implements IState {
 
     private ArrayList<Hotspot> enemyHotspotArray;
 
+    /**
+     * Score du joueur
+     */
     private int score = 0;
 
     private Hotspot weapon;
@@ -129,12 +168,23 @@ public class Room1 implements IState {
     LocalDateTime oldDate = LocalDateTime.now();
     int oldEnemyHitSeconds = oldDate.toLocalTime().toSecondOfDay();
 
+    /**
+     * <b>Constructeur de Room1</b>
+     *
+     * @param scene
+     *      Scène à laquelle on ajoute les éléments de la room
+     * @param graphicsContext
+     *      Elements à ajouter à la scène
+     */
     public Room1(Scene scene, GraphicsContext graphicsContext) {
         this.scene = scene;
         this.graphicsContext = graphicsContext;
 
     }
 
+    /**
+     * Initialise les éléments à afficher sur la scène
+     */
     @Override
     public void init(){
 
@@ -237,6 +287,11 @@ public class Room1 implements IState {
         animator.play();
     }
 
+    /**
+     * Mets à jour le cycle du jeu
+     * @param currentTime
+     *      Temps actuel
+     */
     @Override
     public void update(long currentTime) {
         animator.update(this.playerMover, 0, 32, 64, 96);
@@ -322,6 +377,9 @@ public class Room1 implements IState {
         playerHP.setText("HP : "+playerCharacter.getHealthPoints());
     }
 
+    /**
+     * Déssine les éléments sur la scène
+     */
     @Override
     public void draw() {
         for (int y = 512; y <= 1536; y += 32) {
@@ -407,6 +465,9 @@ public class Room1 implements IState {
     }
 
 
+    /**
+     * Contient les actions à effectuer quand le joueur quitte
+     */
     @Override
     public void onExit() {
         scene.setOnKeyPressed(null);
@@ -416,6 +477,9 @@ public class Room1 implements IState {
         PlayerProperties.Player1.setCharacter2D(player);
     }
 
+    /**
+     * Contient les actions à effectuer quand le joueur ferme la fenetre
+     */
     @Override
     public void onClose() {
         imageView.setImage(null);
@@ -423,6 +487,9 @@ public class Room1 implements IState {
         dialog.hide();
     }
 
+    /**
+     * Définit les murs du labirinthe depuis un fichier
+     */
     public void setMazeWalls(){
         File file = new File("src/main/framework/game/rooms/mazeWall");
         try{
@@ -515,6 +582,11 @@ public class Room1 implements IState {
         }
     }
 
+    /**
+     * Gère la transformation en Goku
+     * @param GokuImage
+     *      Image de Goku
+     */
     public void gokuTransformation(Image GokuImage){
 
         imageView.setImage(null);
@@ -527,23 +599,42 @@ public class Room1 implements IState {
     }
 
 
-
+    /**
+     * @return Le compteur de secondes restantes
+     */
     public int getSecondecounter() {
         return seconde;
     }
 
+    /**
+     * Cette méthode permet de redéfinir le temps restant.
+     *
+     * @param seconde
+     *      Le temps restant en secondes
+     */
     public void setSecondecounter(int seconde) {
         this.seconde = seconde;
     }
 
+    /**
+     * @return Le temps restant en minute
+     */
     public int getMinutecounter() {
         return minute;
     }
 
+    /**
+     * Cette méthode permet de redéfinir le temps restant.
+     * @param minute
+     *      Le temps restant en minutes
+     */
     public void setMinutecounter(int minute) {
         this.minute = minute;
     }
 
+    /**
+     * @return Score du joueur sur la partie en cours
+     */
     public int getScore() {
         return score;
     }

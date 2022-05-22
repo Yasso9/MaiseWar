@@ -7,17 +7,44 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
+import main.framework.entities.Entity;
 import main.framework.game.PlayerProperties;
 import main.framework.game.rooms.Room1;
 
+/**
+ * CombatState est la classe qui définie l'état d'un combat.
+ * Elle dérive de la classe IState.
+ * Cette classe est caractérisée par les informations suivantes :
+ * </p>
+ * </p>
+ * @author PCEBL
+ * @version 2.0
+ * @see IState
+ */
 public class CombatState implements IState {
 
+    /**
+     * Scene en cours
+     */
     private Scene scene;
+    /**
+     * Perspective de la caméra
+     */
     private PerspectiveCamera camera;
+    /**
+     * Elements graphiques
+     */
     private GraphicsContext graphicsContext;
 
+    /**
+     * Personnage du joueur
+     */
     private Character playerCharacter;
 
+    /**
+     * <b>Constructeur de CombatState</b>
+     *
+     */
     public CombatState(Scene scene, GraphicsContext graphicsContext) {
         this.scene = scene;
         this.graphicsContext = graphicsContext;
