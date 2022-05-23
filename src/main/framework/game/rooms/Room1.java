@@ -120,10 +120,15 @@ public class Room1 implements IState {
     private GameObject2D key2D;
     private GameObject2D weapon2D;
     private GameObject2D heart2D;
+    private GameObject2D teleportation2D;
+    private GameObject2D teleportationDest2D;
 
     private Hotspot talker;
     private Hotspot potion;
     private Hotspot key;
+    private Hotspot weapon;
+    private Hotspot heart;
+    private Hotspot teleport;
 
     private ArrayList<Hotspot> enemyHotspotArray;
 
@@ -132,8 +137,7 @@ public class Room1 implements IState {
      */
     private int score = 0;
 
-    private Hotspot weapon;
-    private Hotspot heart;
+
 
     private Controller playerController;
     private Mover playerMover;
@@ -158,12 +162,15 @@ public class Room1 implements IState {
     Image gokuShield;
     Image gokuSword;
 
+    Image teleportation;
+
     SpriteAnimator animator;
 
     Item keyItem;
     Item weaponItem;
     Item potionItem;
     Item heartItem;
+    Item teleportationItem;
 
     LocalDateTime oldDate = LocalDateTime.now();
     int oldEnemyHitSeconds = oldDate.toLocalTime().toSecondOfDay();
@@ -261,6 +268,7 @@ public class Room1 implements IState {
             enemyCombat = new Image(new FileInputStream("src/main/framework/game/resources/enemygif.gif"));
             keyImage = new Image(new FileInputStream("src/main/framework/game/resources/key.png"));
             heartImage = new Image(new FileInputStream("src/main/framework/game/resources/heart.png"));
+            teleportation = new Image(new FileInputStream("src/main/framework/game/resources/teleportation.png"));
 
         }catch (Exception e){
             System.out.println(e.getCause());
@@ -357,6 +365,13 @@ public class Room1 implements IState {
         }
 
 
+        if (teleport!=null){
+            if (teleport.isCharacterOnHotspot()){
+                player.setX(teleportationDest2D.getX());
+                player.setY(teleportationDest2D.getY());
+            }
+        }
+
         if (talker.isCharacterOnHotspot()){
             scene.getCamera().setTranslateY(256);
             scene.getCamera().setTranslateX(256);
@@ -416,6 +431,9 @@ public class Room1 implements IState {
             graphicsContext.drawImage(weaponImage, 0, 0, 32, 32, weapon2D.getX(), weapon2D.getY(), weapon2D.getWidth(), weapon2D.getHeight());
         }
 
+        if (teleport !=null){
+            graphicsContext.drawImage(teleportation, 0, 0, 32, 32, teleportation2D.getX(), teleportation2D.getY(), teleportation2D.getWidth(), teleportation2D.getHeight());
+        }
 
         if (heart!=null){
             graphicsContext.drawImage(heartImage, 0, 0, 32, 32, heart2D.getX(), heart2D.getY(), heart2D.getWidth(), heart2D.getHeight());
@@ -555,18 +573,22 @@ public class Room1 implements IState {
                             weaponItem = new Item("weapon", 32, 32, x, y);
                             weapon2D = weaponItem.createGameObject2D();
                             weapon = weaponItem.createHotSpot();
-
                             weapon.addTriggerCharacter(player);
-
                             break;
                         case"8":
                             heartItem = new Item("heart", 32, 32, x, y);
                             heart2D = heartItem.createGameObject2D();
                             heart = heartItem.createHotSpot();
-
                             heart.addTriggerCharacter(player);
-
                             break;
+                        case"T":
+                            teleportationItem = new Item("teleportation",32,32,x,y);
+                            teleportation2D = teleportationItem.createGameObject2D();
+                            teleport = teleportationItem.createHotSpot();
+                            teleport.addTriggerCharacter(player);
+                            break;
+                        case"B":
+                            teleportationDest2D = new Item("dest",32,32,x,y).createGameObject2D();
                     }
                     x+=32;
                 }
