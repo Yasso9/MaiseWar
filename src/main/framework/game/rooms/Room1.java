@@ -34,6 +34,9 @@ import main.framework.state.StateStack;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Timer;
@@ -248,19 +251,22 @@ public class Room1 implements IState {
         dialog.setY(0);
 
         try {
-            playerSprite = new Image( new FileInputStream("src/main/framework/game/resources/sprites.png"));
-            otherSprites = new Image(new FileInputStream("src/main/framework/game/resources/EntitySet.png"));
-            tileset = new Image(new FileInputStream("src/main/framework/game/resources/tileset.png"));
-            shieldImage = new Image(new FileInputStream("src/main/framework/game/resources/shield_plat.png"));
-            weaponImage = new Image(new FileInputStream("src/main/framework/game/resources/sword_plat.png"));
 
-            gokuNormale = new Image(new FileInputStream("src/main/framework/game/resources/goku.png"));
-            gokuShield = new Image(new FileInputStream("src/main/framework/game/resources/goku_shield.png"));
-            gokuSword = new Image(new FileInputStream("src/main/framework/game/resources/goku_sword.png"));
-            gokuSwordAndShield = new Image(new FileInputStream("src/main/framework/game/resources/goku_sword_shield.png"));
-            enemyCombat = new Image(new FileInputStream("src/main/framework/game/resources/enemygif.gif"));
-            keyImage = new Image(new FileInputStream("src/main/framework/game/resources/key.png"));
-            heartImage = new Image(new FileInputStream("src/main/framework/game/resources/heart.png"));
+            playerSprite = new Image(getClass().getResourceAsStream("/main/resources/sprites.png"));
+            otherSprites = new Image(getClass().getResourceAsStream("/main/resources/EntitySet.png"));
+
+            tileset = new Image(getClass().getResourceAsStream("/main/resources/tileset.png"));
+
+            shieldImage = new Image(getClass().getResourceAsStream("/main/resources/shield_plat.png"));
+            weaponImage = new Image(getClass().getResourceAsStream("/main/resources/sword_plat.png"));
+
+            gokuNormale = new Image(getClass().getResourceAsStream("/main/resources/goku.png"));
+            gokuShield = new Image(getClass().getResourceAsStream("/main/resources/goku_shield.png"));
+            gokuSword = new Image(getClass().getResourceAsStream("/main/resources/goku_sword.png"));
+            gokuSwordAndShield = new Image(getClass().getResourceAsStream("/main/resources/goku_sword_shield.png"));
+            enemyCombat = new Image(getClass().getResourceAsStream("/main/resources/enemygif.gif"));
+            keyImage = new Image(getClass().getResourceAsStream("/main/resources/key.png"));
+            heartImage = new Image(getClass().getResourceAsStream("/main/resources/heart.png"));
 
         }catch (Exception e){
             System.out.println(e.getCause());
@@ -315,7 +321,9 @@ public class Room1 implements IState {
                 score+=100;
 
                 for (Hotspot hotspotEnemy: enemyHotspotArray) {
-                    hotspotEnemy.getCharacter().setDamagePoints(5);
+                    if(hotspotEnemy!=null){
+                        hotspotEnemy.getCharacter().setDamagePoints(5);
+                    }
                 }
 
                 inventaire.add(new ImageView(shieldImage),invIndex,0);
@@ -357,16 +365,19 @@ public class Room1 implements IState {
         }
 
 
-        if (talker.isCharacterOnHotspot()){
-            scene.getCamera().setTranslateY(256);
-            scene.getCamera().setTranslateX(256);
-            timerTask.cancel();
-            graphicsContext.setFill(Color.WHITE);
-            graphicsContext.fillText("You won !",256,256,512);
-            graphicsContext.fillText("Your score :  "+getScore(),56,356,512);
-            graphicsContext.fillText("Your time :  "+getMinutecounter()+"."+getSecondecounter(),56,156,512);
-            playerController.setDisabled(true);
+        if(talker!=null){
+            if (talker.isCharacterOnHotspot()){
+                scene.getCamera().setTranslateY(256);
+                scene.getCamera().setTranslateX(256);
+                timerTask.cancel();
+                graphicsContext.setFill(Color.WHITE);
+                graphicsContext.fillText("You won !",256,256,512);
+                graphicsContext.fillText("Your score :  "+getScore(),56,356,512);
+                graphicsContext.fillText("Your time :  "+getMinutecounter()+"."+getSecondecounter(),56,156,512);
+                playerController.setDisabled(true);
+            }
         }
+
 
         if(playerController.getInputs().contains("ESCAPE")) {
             onExit();
@@ -396,9 +407,12 @@ public class Room1 implements IState {
             graphicsContext.drawImage(tileset, 64, 0, 32, 32, door.getX(), door.getY(), door.getHeight(), door.getWidth());
         }
 
-        graphicsContext.drawImage(playerSprite, 192, 224, 32, 32, talker2D.getX(), talker2D.getY(), talker2D.getWidth(), talker2D.getHeight());
+        if(talker!=null){
+            graphicsContext.drawImage(playerSprite, 192, 224, 32, 32, talker2D.getX(), talker2D.getY(), talker2D.getWidth(), talker2D.getHeight());
 
-        graphicsContext.setFill((talker.isCharacterOnHotspot()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
+            graphicsContext.setFill((talker.isCharacterOnHotspot()? new Color(1, 0, 0, 0.3) : new Color(1, 1, 0, 0.3)));
+        }
+
         graphicsContext.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
 
 
@@ -491,9 +505,19 @@ public class Room1 implements IState {
      * Définit les murs du labirinthe depuis un fichier
      */
     public void setMazeWalls(){
-        File file = new File("src/main/framework/game/rooms/mazeWall");
+        //InputStream inputStream = getClass().getResourceAsStream("src/main/framework/game/rooms/mazeWall");
+        //InputStreamReader iss = new InputStreamReader(inputStream);
+
+        //Scanner sc = new Scanner(reader);
+        //File file = new File("src/main/framework/game/rooms/mazeWall");
+        //File file = new File("/mazeWall");
+
         try{
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            InputStream inputStream = getClass().getResourceAsStream("/main/resources/mazeWall");
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            //BufferedReader br = new BufferedReader(new FileReader(file));
+            //BufferedReader br = new BufferedReader(iss);
+
             String st;
             String[] tab;
             int x = 544;
